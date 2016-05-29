@@ -1,6 +1,6 @@
 class Attestify::TestTest < Attestify::Test
   def test_a_test_with_a_failed_assertion
-    test_class = Class.new(Attestify::Test) do
+    test_class = Class.new(MockTest) do
       def test_with_failed_assertion
         assert false
       end
@@ -18,7 +18,7 @@ class Attestify::TestTest < Attestify::Test
   end
 
   def test_a_test_with_a_raised_exception
-    test_class = Class.new(Attestify::Test) do
+    test_class = Class.new(MockTest) do
       def test_with_raised_exception
         raise "An error"
       end
@@ -36,7 +36,7 @@ class Attestify::TestTest < Attestify::Test
   end
 
   def test_a_test_with_no_failures
-    test_class = Class.new(Attestify::Test) do
+    test_class = Class.new(MockTest) do
       def test_with_no_failures
         assert true
       end
@@ -54,7 +54,7 @@ class Attestify::TestTest < Attestify::Test
   end
 
   def test_a_test_with_multiple_failed_assertions
-    test_class = Class.new(Attestify::Test) do
+    test_class = Class.new(MockTest) do
       def test_with_multiple_failures
         assert false
         assert false
