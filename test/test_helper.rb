@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'attestify'
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+require "attestify"
 
-require 'minitest/autorun'
+require "minitest/autorun"

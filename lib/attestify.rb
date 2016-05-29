@@ -1,5 +1,4 @@
-require "attestify/version"
-
+# :nodoc:
 module Attestify
-  # Your code goes here...
+  autoload :VERSION, "attestify/version"
 end

@@ -1,0 +1,18 @@
+AllCops:
+  Exclude:
+    - bin/**/*
+    - tmp/**/*
+    - vendor/**/*
+  DisplayCopNames: true
+
+Metrics/LineLength:
+  Max: 120
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Style/SpaceInsideBlockBraces:
+  EnforcedStyleForEmptyBraces: space
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
