@@ -34,11 +34,13 @@ module Attestify
     end
 
     def run_tests
-      # TODO
+      Attestify::Test.tests.each do |test|
+        test.run(reporter)
+      end
     end
 
     def report_tests
-      # TODO
+      reporter.report
     end
   end
 end
