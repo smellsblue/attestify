@@ -3,6 +3,8 @@ require "attestify"
 module Attestify
   # This is the base class for all Attestify tests.
   class Test
+    include Attestify::Assertions
+
     def initialize(method)
       @_test_method = method
       @_assertions = Attestify::AssertionResults.new

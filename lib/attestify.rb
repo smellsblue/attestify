@@ -1,6 +1,7 @@
 # :nodoc:
 module Attestify
   autoload :AssertionResults, "attestify/assertion_results"
+  autoload :Assertions,       "attestify/assertions"
   autoload :CLI,              "attestify/cli"
   autoload :Reporter,         "attestify/reporter"
   autoload :Test,             "attestify/test"

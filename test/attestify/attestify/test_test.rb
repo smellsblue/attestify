@@ -28,7 +28,7 @@ class Attestify::TestTest < Attestify::Test
     assert_equal 0, test.assertions.failed
     assert_equal 1, test.assertions.errored
     assert_equal 0, test.assertions.passed
-    assert_equal 1, test.assertions.total
+    assert_equal 0, test.assertions.total
   end
 
   def test_a_test_with_no_failures
