@@ -1,13 +1,24 @@
 AllCops:
   Exclude:
     - bin/**/*
-    - test/**/*
     - tmp/**/*
     - vendor/**/*
   DisplayCopNames: true
 
+Metrics/AbcSize:
+  Exclude:
+    - test/**/*_test.rb
+
 Metrics/LineLength:
   Max: 120
+
+Metrics/MethodLength:
+  Exclude:
+    - test/**/*_test.rb
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - test/**/*_test.rb
 
 Style/SignalException:
   EnforcedStyle: only_raise
