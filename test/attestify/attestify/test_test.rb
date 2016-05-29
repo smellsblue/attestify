@@ -14,6 +14,7 @@ class Attestify::TestTest < Attestify::Test
     assert_equal 1, test.assertions.failed
     assert_equal 0, test.assertions.errored
     assert_equal 0, test.assertions.passed
+    assert_equal 1, test.assertions.total
   end
 
   def test_a_test_with_a_raised_exception
@@ -31,6 +32,7 @@ class Attestify::TestTest < Attestify::Test
     assert_equal 0, test.assertions.failed
     assert_equal 1, test.assertions.errored
     assert_equal 0, test.assertions.passed
+    assert_equal 1, test.assertions.total
   end
 
   def test_a_test_with_no_failures
@@ -48,6 +50,7 @@ class Attestify::TestTest < Attestify::Test
     assert_equal 0, test.assertions.failed
     assert_equal 0, test.assertions.errored
     assert_equal 1, test.assertions.passed
+    assert_equal 1, test.assertions.total
   end
 
   def test_a_test_with_multiple_failed_assertions
@@ -66,5 +69,6 @@ class Attestify::TestTest < Attestify::Test
     assert_equal 2, test.assertions.failed
     assert_equal 0, test.assertions.errored
     assert_equal 0, test.assertions.passed
+    assert_equal 2, test.assertions.total
   end
 end

@@ -4,7 +4,7 @@ module Attestify
   # Command Line Interface for running Attestify tests.
   class CLI
     def self.reporter
-      @reporter ||= Attestify::ConsoleReporter.new
+      @reporter ||= Attestify::Reporter.new
     end
 
     def self.start
