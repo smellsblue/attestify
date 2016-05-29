@@ -8,8 +8,6 @@ class Attestify::TestTest < Attestify::Test
 
     test = test_class.new(:test_with_failed_assertion)
     test.run
-    assert test.failed?
-    refute test.errored?
     refute test.passed?
     assert_equal 1, test.assertions.failed
     assert_equal 0, test.assertions.errored
@@ -26,8 +24,6 @@ class Attestify::TestTest < Attestify::Test
 
     test = test_class.new(:test_with_raised_exception)
     test.run
-    refute test.failed?
-    assert test.errored?
     refute test.passed?
     assert_equal 0, test.assertions.failed
     assert_equal 1, test.assertions.errored
@@ -44,8 +40,6 @@ class Attestify::TestTest < Attestify::Test
 
     test = test_class.new(:test_with_no_failures)
     test.run
-    refute test.failed?
-    refute test.errored?
     assert test.passed?
     assert_equal 0, test.assertions.failed
     assert_equal 0, test.assertions.errored
@@ -63,8 +57,6 @@ class Attestify::TestTest < Attestify::Test
 
     test = test_class.new(:test_with_multiple_failures)
     test.run
-    assert test.failed?
-    refute test.errored?
     refute test.passed?
     assert_equal 2, test.assertions.failed
     assert_equal 0, test.assertions.errored

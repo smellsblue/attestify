@@ -1,8 +1,11 @@
+require "attestify"
+
 module Attestify
   # This is the base class for all Attestify tests.
   class Test
     def initialize(method)
       @_test_method = method
+      @_assertions = Attestify::AssertionResults.new
     end
 
     def self.inherited(test_class)
@@ -33,8 +36,32 @@ module Attestify
     def teardown
     end
 
+    def assertions
+      @_assertions
+    end
+
     def name
       "#{self.class.name}##{@_test_method}"
+    end
+
+    def passed?
+      assertions.passed?
+    end
+
+    def result_code
+      if passed?
+        "."
+      elsif skipped?
+        "S"
+      elsif assertions.errored?
+        "E"
+      else
+        "F"
+      end
+    end
+
+    def skipped?
+      false
     end
 
     def run
