@@ -1,6 +1,12 @@
 module Attestify
   # A basic test runner to run all tests.
   class TestRunner
+    attr_reader :reporter
+
+    def initialize(reporter)
+      @reporter = reporter
+    end
+
     def directory
       "."
     end
@@ -9,11 +15,6 @@ module Attestify
       require_helper
       require_tests
       run_tests
-      report_tests
-    end
-
-    def reporter
-      @reporter ||= Attestify::ConsoleReporter.new
     end
 
     private

@@ -4,6 +4,6 @@ module Attestify
   autoload :ConsoleReporter, "attestify/console_reporter"
   autoload :Test,            "attestify/test"
   autoload :TestRunner,      "attestify/test_runner"
-  autoload :Timing,          "attestify/timing"
+  autoload :Timer,           "attestify/timer"
   autoload :VERSION,         "attestify/version"
 end
