@@ -19,6 +19,14 @@ module Attestify
       record_assert(expected != actual)
     end
 
+    def skip
+      raise Attestify::SkippedError
+    end
+
+    def skipped?
+      assertions.skipped?
+    end
+
     private
 
     def record_assert(passed)

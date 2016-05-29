@@ -22,11 +22,17 @@ module Attestify
     end
 
     def errored
-      if error
+      if skipped?
+        0
+      elsif error
         1
       else
         0
       end
+    end
+
+    def skipped?
+      Attestify::SkippedError === error # rubocop:disable Style/CaseEquality
     end
 
     def errored?

@@ -62,10 +62,6 @@ module Attestify
       end
     end
 
-    def skipped?
-      false
-    end
-
     def run
       begin
         setup
