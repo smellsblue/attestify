@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["mike@virata-stone.com"]
 
   spec.summary       = "A new way to test your code"
-  spec.description   = "A small framework for testing your code. It keeps track of assertion failures as well as test \
-failures."
+  spec.description   = "A small framework for testing your code. It keeps track of assertion failures as well as " \
+                       "test failures."
   spec.homepage      = "https://github.com/smellsblue/attestify"
   spec.license       = "MIT"
 
