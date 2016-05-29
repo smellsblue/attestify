@@ -5,7 +5,7 @@ module Attestify
   class CLI
     def self.start
       Attestify::Timing.time do
-        # Time the run of all tests running.
+        Attestify::TestRunner.new.run
       end
     end
   end
