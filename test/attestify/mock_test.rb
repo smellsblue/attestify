@@ -1,6 +1,16 @@
 class Attestify::MockTest < Attestify::Test
+  class Assertable
+    include Attestify::Assertions
+    attr_reader :assertions
+
+    def initialize(assertions)
+      @assertions = assertions
+    end
+  end
+
   def setup
     @assertions = Attestify::AssertionResults.new
+    @assert = Assertable.new(@assertions)
     @mock = Attestify::Mock.new(@assertions)
   end
 
@@ -86,14 +96,51 @@ class Attestify::MockTest < Attestify::Test
   end
 
   def test_expect_with_block_that_does_nothing
-    skip
+    called = false
+    @mock.expect(:example, true, [Integer, String]) { called = true }
+    @mock.example(42, "4")
+    assert called
+  end
+
+  def test_expect_with_block_that_asserts_on_arguments
+    @mock.expect(:example, :answer, [Integer, String]) do |x, y|
+      @assert.assert_equal 42, x
+      @assert.assert_equal "4", y
+    end
+
+    assert_equal :answer, @mock.example(42, "4")
+    assert_equal 2, @assertions.passed
+    assert_equal 0, @assertions.failed
   end
 
   def test_expect_with_block_that_asserts_on_arguments_and_fails
-    skip
+    @mock.expect(:example, :answer, [Integer, String]) do |x, y|
+      @assert.assert_equal 42, x
+      @assert.assert_equal "4", y
+    end
+
+    assert_equal :answer, @mock.example("42", 4)
+    assert_equal 0, @assertions.passed
+    assert_equal 2, @assertions.failed
   end
 
-  def test_expect_with_block_that_asserts_on_arguments_and_succeeds
-    skip
+  def test_expect_with_block_that_yields_and_succeeds
+    @mock.expect(:example, :answer) do |&block|
+      @assert.assert_equal 42, block.call
+    end
+
+    assert_equal :answer, @mock.example { 42 }
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_expect_with_block_that_yields_and_fails
+    @mock.expect(:example, :answer) do |&block|
+      @assert.assert_equal 42, block.call
+    end
+
+    assert_equal :answer, @mock.example { "42" }
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
   end
 end

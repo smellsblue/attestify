@@ -50,10 +50,11 @@ module Attestify
         @called
       end
 
-      def call(args, block)
+      def call(actual_args, actual_block)
         @called = true
-        @actual_args = args
-        @actual_block = block
+        @actual_args = actual_args
+        @actual_block = actual_block
+        block.call(*actual_args, &actual_block) if block
         return_value
       end
 
