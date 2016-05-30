@@ -19,8 +19,21 @@ module Attestify
       record_assert(expected != actual) { "Expected #{expected.inspect} != #{actual.inspect}" }
     end
 
-    def skip
-      raise Attestify::SkippedError
+    def assert_raises(*exceptions)
+      yield
+      record_assert(false) { "Expected one of: #{exceptions.inspect} to be raised, but nothing was raised" }
+      return nil
+    rescue => e
+      record_assert(exceptions.any? { |x| e.is_a?(x) }) do
+        "Expected one of: #{exceptions.inspect} to be raised, but instead got: #{e.class.name}"
+      end
+      return e
+    end
+
+    # TODO: Maybe implement refute_raises?
+
+    def skip(message = "Skipped this test")
+      raise Attestify::SkippedError, message
     end
 
     def skipped?

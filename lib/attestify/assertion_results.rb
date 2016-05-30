@@ -38,7 +38,7 @@ module Attestify
     end
 
     def skipped?
-      Attestify::SkippedError === error # rubocop:disable Style/CaseEquality
+      error.is_a?(Attestify::SkippedError)
     end
 
     def errored?
