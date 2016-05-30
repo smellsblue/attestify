@@ -3,6 +3,7 @@ module Attestify
   autoload :AssertionResults, "attestify/assertion_results"
   autoload :Assertions,       "attestify/assertions"
   autoload :CLI,              "attestify/cli"
+  autoload :ColorReporter,    "attestify/color_reporter"
   autoload :Mock,             "attestify/mock"
   autoload :Reporter,         "attestify/reporter"
   autoload :SkippedError,     "attestify/skipped_error"

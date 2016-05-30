@@ -56,16 +56,17 @@ module Attestify
     # Contains details of a failure, including the message and
     # backtrace information.
     class FailureDetail
-      attr_reader :message, :backtrace_locations
+      attr_reader :message, :backtrace_locations, :type
       ATTESTIFY_LIB = File.join(Attestify.root, "lib").freeze
 
-      def initialize(message, backtrace_locations)
+      def initialize(message, backtrace_locations, type = :failure)
         @message = message
         @backtrace_locations = simplify_backtrace_locations(backtrace_locations)
+        @type = type
       end
 
       def self.for_error(exception)
-        new("#{exception.class.name}: #{exception.message}", exception.backtrace_locations)
+        new("#{exception.class.name}: #{exception.message}", exception.backtrace_locations, :error)
       end
 
       private

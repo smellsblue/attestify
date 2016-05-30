@@ -1,6 +1,6 @@
 module Attestify
   # Reports results to the console.
-  class Reporter
+  class Reporter # rubocop:disable Metrics/ClassLength
     attr_accessor :timer
 
     def initialize
@@ -62,25 +62,37 @@ module Attestify
       puts
 
       @failures.each_with_index do |failure, i|
-        puts
-        puts "#{i + 1}) #{failure.name}"
-        puts_failure_details(failure, i + 1)
+        puts_failure(failure, i + 1)
       end
     end
 
+    def puts_failure(failure, number)
+      puts
+      puts_failure_header(failure, number)
+      puts_failure_details(failure, number)
+    end
+
+    def puts_failure_header(failure, number)
+      puts "#{number}) #{failure.name}"
+    end
+
     def puts_failure_details(failure, number)
-      failure.assertions.failure_details.each_with_index do |failure_details, i|
-        puts
-        puts "  #{number}.#{i + 1}) #{failure_details.message}"
-        puts "    #{failure_details.backtrace_locations.join("\n    ")}"
+      failure.assertions.failure_details.each_with_index do |failure_detail, i|
+        puts_failure_detail(failure_detail, number, i + 1)
       end
+    end
+
+    def puts_failure_detail(failure_detail, number, sub_number)
+      puts
+      puts "  #{number}.#{sub_number}) #{failure_detail.message}"
+      puts "    #{failure_detail.backtrace_locations.join("\n    ")}"
     end
 
     def puts_footer
       puts
       puts "Finished in #{elapsed_time}, #{tests_per_second}, #{assertions_per_second}"
-      puts "#{@total_tests} tests, #{@total_failures} failures, #{@total_errors} errors, #{@total_skips} skips, " \
-           "#{@total_assertions} assertions, #{@total_failed_assertions} failed assertions"
+      puts "#{total_tests}, #{total_failures}, #{total_errors}, #{total_skips}, " \
+           "#{total_assertions}, #{total_failed_assertions}"
     end
 
     def elapsed_time
@@ -101,6 +113,30 @@ module Attestify
       else
         "? assertions/second"
       end
+    end
+
+    def total_tests
+      "#{@total_tests} tests"
+    end
+
+    def total_failures
+      "#{@total_failures} failures"
+    end
+
+    def total_errors
+      "#{@total_errors} errors"
+    end
+
+    def total_skips
+      "#{@total_skips} skips"
+    end
+
+    def total_assertions
+      "#{@total_assertions} assertions"
+    end
+
+    def total_failed_assertions
+      "#{@total_failed_assertions} failed assertions"
     end
   end
 end
