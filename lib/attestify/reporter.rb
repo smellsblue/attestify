@@ -18,17 +18,9 @@ module Attestify
     end
 
     def record(result)
-      @total_tests += 1
-      @total_assertions += result.assertions.total
-      @total_failed_assertions += result.assertions.failed
-
-      if result.skipped?
-        @total_skips += 1
-      elsif !result.passed?
-        record_failure(result)
-      end
-
-      print result.result_code
+      add_to_totals(result)
+      @failures << result if !result.skipped? && !result.passed?
+      print_result_code(result)
     end
 
     def report
@@ -37,6 +29,24 @@ module Attestify
     end
 
     private
+
+    def add_to_totals(result)
+      @total_tests += 1
+      @total_assertions += result.assertions.total
+      @total_failed_assertions += result.assertions.failed
+
+      if result.skipped?
+        @total_skips += 1
+      elsif result.errored?
+        @total_errors += 1
+      elsif result.failed?
+        @total_failures += 1
+      end
+    end
+
+    def print_result_code(result)
+      print result.result_code
+    end
 
     def record_failure(result)
       @failures << result
@@ -68,17 +78,29 @@ module Attestify
 
     def puts_footer
       puts
-      puts "Finished in #{timer}, #{tests_per_second}, #{assertions_per_second}"
+      puts "Finished in #{elapsed_time}, #{tests_per_second}, #{assertions_per_second}"
       puts "#{@total_tests} tests, #{@total_failures} failures, #{@total_errors} errors, #{@total_skips} skips, " \
            "#{@total_assertions} assertions, #{@total_failed_assertions} failed assertions"
     end
 
+    def elapsed_time
+      timer || "?"
+    end
+
     def tests_per_second
-      format("%.1f tests/second", @total_tests.to_f / timer.duration)
+      if timer
+        format("%.1f tests/second", @total_tests.to_f / timer.duration)
+      else
+        "? tests/second"
+      end
     end
 
     def assertions_per_second
-      format("%.1f assertions/second", @total_assertions.to_f / timer.duration)
+      if timer
+        format("%.1f assertions/second", @total_assertions.to_f / timer.duration)
+      else
+        "? assertions/second"
+      end
     end
   end
 end

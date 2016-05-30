@@ -50,15 +50,25 @@ module Attestify
       assertions.passed?
     end
 
-    def result_code
+    def errored?
+      assertions.errored?
+    end
+
+    def failed?
+      assertions.failed?
+    end
+
+    def result_code # rubocop:disable Metrics/MethodLength
       if passed?
         "."
       elsif skipped?
         "S"
-      elsif assertions.errored?
+      elsif errored?
         "E"
-      else
+      elsif failed?
         "F"
+      else
+        "?"
       end
     end
 

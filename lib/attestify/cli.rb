@@ -11,6 +11,8 @@ module Attestify
       timer = Attestify::Timer.time do
         Attestify::TestRunner.new(reporter).run
       end
+    rescue => e
+      abort("Error running tests: #{e}\n  #{e.backtrace.join("\n  ")}")
     ensure
       reporter.timer = timer
       reporter.report
