@@ -19,6 +19,12 @@ module Attestify
       record_assert(expected == actual) { message || "Expected #{expected.inspect} == #{actual.inspect}" }
     end
 
+    def assert_in_delta(expected, actual, delta = 0.001, message = nil)
+      record_assert((expected - actual).abs < delta) do
+        message || "Expected #{expected.inspect} == #{actual.inspect} within #{delta.inspect}"
+      end
+    end
+
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
       exceptions = [StandardError] if exceptions.empty?
@@ -47,6 +53,12 @@ module Attestify
 
     def refute_equal(expected, actual, message = nil)
       record_assert(expected != actual) { message || "Expected #{expected.inspect} != #{actual.inspect}" }
+    end
+
+    def refute_in_delta(expected, actual, delta = 0.001, message = nil)
+      record_assert((expected - actual).abs >= delta) do
+        message || "Expected #{expected.inspect} != #{actual.inspect} within #{delta.inspect}"
+      end
     end
 
     # TODO: Maybe implement refute_raises?
