@@ -9,4 +9,8 @@ module Attestify
   autoload :TestRunner,       "attestify/test_runner"
   autoload :Timer,            "attestify/timer"
   autoload :VERSION,          "attestify/version"
+
+  def self.root
+    @root ||= File.realpath(File.expand_path("../..", __FILE__)).freeze
+  end
 end

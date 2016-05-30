@@ -4,22 +4,23 @@ module Attestify
     attr_accessor :timer
 
     def initialize
-      @passed = true
       @failures = []
       @total_tests = 0
       @total_assertions = 0
+      @total_failed_assertions = 0
       @total_failures = 0
       @total_errors = 0
       @total_skips = 0
     end
 
     def passed?
-      @passed
+      @total_failures + @total_errors == 0
     end
 
     def record(result)
       @total_tests += 1
       @total_assertions += result.assertions.total
+      @total_failed_assertions += result.assertions.failed
 
       if result.skipped?
         @total_skips += 1
@@ -38,7 +39,6 @@ module Attestify
     private
 
     def record_failure(result)
-      @passed = false
       @failures << result
 
       if result.assertions.errored?
@@ -54,16 +54,23 @@ module Attestify
       @failures.each_with_index do |failure, i|
         puts
         puts "#{i + 1}) #{failure.name}"
-        puts "  #{failure.assertions.error}" if failure.assertions.error
+        puts_failure_details(failure, i + 1)
+      end
+    end
+
+    def puts_failure_details(failure, number)
+      failure.assertions.failure_details.each_with_index do |failure_details, i|
+        puts
+        puts "  #{number}.#{i + 1}) #{failure_details.message}"
+        puts "    #{failure_details.backtrace_locations.join("\n    ")}"
       end
     end
 
     def puts_footer
       puts
       puts "Finished in #{timer}, #{tests_per_second}, #{assertions_per_second}"
-      puts
-      puts "#{@total_tests} tests, #{@total_assertions} assertions, " \
-           "#{@total_failures} failures, #{@total_errors} errors, #{@total_skips} skips"
+      puts "#{@total_tests} tests, #{@total_failures} failures, #{@total_errors} errors, #{@total_skips} skips, " \
+           "#{@total_assertions} assertions, #{@total_failed_assertions} failed assertions"
     end
 
     def tests_per_second
