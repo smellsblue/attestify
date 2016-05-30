@@ -37,19 +37,63 @@ class Attestify::MockTest < Attestify::Test
     assert_equal 1, @assertions.failed
   end
 
+  def test_mock_with_too_many_arguments
+    @mock.expect(:example, true, [42, 4])
+    @mock.example(42, 4, 2)
+    @mock.verify
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_mock_with_not_enough_arguments
+    @mock.expect(:example, true, [42, 4])
+    @mock.example(42)
+    @mock.verify
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_mock_with_arguments_that_match
+    @mock.expect(:example, true, [42, 4])
+    @mock.example(42, 4)
+    @mock.verify
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_mock_with_arguments_that_dont_match
+    @mock.expect(:example, true, [42, 4])
+    @mock.example(42, 5)
+    @mock.verify
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
   def test_mock_with_class_arguments_that_match
-    skip
+    @mock.expect(:example, true, [Integer, String])
+    @mock.example(42, "4")
+    @mock.verify
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
   end
 
   def test_mock_with_class_arguments_that_dont_match
-    skip
+    @mock.expect(:example, true, [Integer, String])
+    @mock.example("42", 4)
+    @mock.verify
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
   end
 
   def test_expect_with_block_that_does_nothing
     skip
   end
 
-  def test_expect_with_block_that_asserts_on_arguments
+  def test_expect_with_block_that_asserts_on_arguments_and_fails
+    skip
+  end
+
+  def test_expect_with_block_that_asserts_on_arguments_and_succeeds
     skip
   end
 end

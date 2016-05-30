@@ -89,7 +89,11 @@ module Attestify
 
       def arguments_valid?
         return false unless args.size == actual_args.size
-        args.each_with_index { |arg, i| return false unless arg == actual_args[i] }
+
+        args.each_with_index do |arg, i|
+          return false unless arg === actual_args[i] # rubocop:disable Style/CaseEquality
+        end
+
         true
       end
     end
