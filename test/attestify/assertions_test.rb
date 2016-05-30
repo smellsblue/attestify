@@ -83,6 +83,14 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal 0, @assertions.failed
   end
 
+  def test_passing_assert_raises_with_no_explicit_exception
+    exception = ArgumentError.new("An example error")
+    result = @assert.assert_raises { raise exception }
+    assert_equal exception, result
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
   def test_passing_assert_raises_with_multiple_possible_exceptions
     exception = ArgumentError.new("An example error")
     result = @assert.assert_raises(NoMethodError, ArgumentError) { raise exception }
@@ -94,6 +102,14 @@ class Attestify::AssertionsTest < Attestify::Test
   def test_failing_assert_raises_with_nothing_raised
     result = @assert.assert_raises(ArgumentError) { }
     assert_equal nil, result
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_assert_raises_with_no_explicit_exception
+    exception = Exception.new("An example error")
+    result = @assert.assert_raises { raise exception }
+    assert_equal exception, result
     assert_equal 0, @assertions.passed
     assert_equal 1, @assertions.failed
   end

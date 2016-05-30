@@ -21,6 +21,7 @@ module Attestify
 
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
+      exceptions = [StandardError] if exceptions.empty?
       yield
       record_assert(false) { message || "Expected one of: #{exceptions.inspect} to be raised, but nothing was raised" }
       return nil
