@@ -3,31 +3,33 @@ module Attestify
   # `assertions` method. The `assertions` method is expected to return
   # an Attestify::AssertionResults.
   module Assertions
-    def assert(value)
-      record_assert(value) { "Failed assertion." }
+    def assert(value, message = nil)
+      record_assert(value) { message || "Failed assertion." }
     end
 
-    def refute(value)
-      record_assert(!value) { "Failed refutation." }
-    end
-
-    def assert_equal(expected, actual)
-      record_assert(expected == actual) { "Expected #{expected.inspect} == #{actual.inspect}" }
-    end
-
-    def refute_equal(expected, actual)
-      record_assert(expected != actual) { "Expected #{expected.inspect} != #{actual.inspect}" }
+    def assert_equal(expected, actual, message = nil)
+      record_assert(expected == actual) { message || "Expected #{expected.inspect} == #{actual.inspect}" }
     end
 
     def assert_raises(*exceptions)
+      message = exceptions.pop if exceptions.last.is_a?(String)
       yield
-      record_assert(false) { "Expected one of: #{exceptions.inspect} to be raised, but nothing was raised" }
+      record_assert(false) { message || "Expected one of: #{exceptions.inspect} to be raised, but nothing was raised" }
       return nil
     rescue => e
       record_assert(exceptions.any? { |x| e.is_a?(x) }) do
-        "Expected one of: #{exceptions.inspect} to be raised, but instead got: #{e.class.name}"
+        message || "Expected one of: #{exceptions.inspect} to be raised, but instead got: #{e.class.name}"
       end
+
       return e
+    end
+
+    def refute(value, message = nil)
+      record_assert(!value) { message || "Failed refutation." }
+    end
+
+    def refute_equal(expected, actual, message = nil)
+      record_assert(expected != actual) { message || "Expected #{expected.inspect} != #{actual.inspect}" }
     end
 
     # TODO: Maybe implement refute_raises?
