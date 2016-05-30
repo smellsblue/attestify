@@ -35,6 +35,29 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_empty
+    @assert.assert_empty []
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_empty
+    @assert.assert_empty [42]
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_assert_empty_with_empty_not_implemented
+    @assert.assert_empty Object.new
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_empty_with_custom_message
+    @assert.assert_empty [42], "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_equal
     @assert.assert_equal 42, 42
     assert_equal 1, @assertions.passed
@@ -68,14 +91,14 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal 0, @assertions.failed
   end
 
-  def test_assert_raises_with_nothing_raised
+  def test_failing_assert_raises_with_nothing_raised
     result = @assert.assert_raises(ArgumentError) { }
     assert_equal nil, result
     assert_equal 0, @assertions.passed
     assert_equal 1, @assertions.failed
   end
 
-  def test_assert_raises_with_wrong_error_raised
+  def test_failing_assert_raises_with_wrong_error_raised
     exception = NoMethodError.new("An example error")
     result = @assert.assert_raises(ArgumentError) { raise exception }
     assert_equal exception, result
@@ -83,7 +106,7 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal 1, @assertions.failed
   end
 
-  def test_assert_raises_with_wrong_error_raised_with_multiple_possible_exceptions
+  def test_failing_assert_raises_with_wrong_error_raised_with_multiple_possible_exceptions
     exception = NoMethodError.new("An example error")
     result = @assert.assert_raises(ArgumentError, KeyError) { raise exception }
     assert_equal exception, result
@@ -91,7 +114,7 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal 1, @assertions.failed
   end
 
-  def test_assert_raises_with_custom_message
+  def test_failing_assert_raises_with_custom_message
     @assert.assert_raises(ArgumentError, "Custom message") { raise NoMethodError, "An example error" }
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
@@ -120,6 +143,29 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_with_custom_message
     @assert.refute true, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_passing_refute_empty
+    @assert.refute_empty [42]
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_refute_empty_with_empty_not_implemented
+    @assert.refute_empty Object.new
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_refute_empty
+    @assert.refute_empty []
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_empty_with_custom_message
+    @assert.refute_empty [], "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
