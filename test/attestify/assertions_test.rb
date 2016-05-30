@@ -1,18 +1,18 @@
 class Attestify::AssertionsTest < Attestify::Test
   def setup
-    @assertions = Object.new
-    @assertions.extend(Attestify::Assertions)
+    @assertions = Attestify::AssertionResults.new
+    @assert = Assertable.new(@assertions)
   end
 
   def test_skip_without_message
     assert_raises Attestify::SkippedError do
-      @assertions.skip
+      @assert.skip
     end
   end
 
   def test_skip_with_message
     exception = assert_raises Attestify::SkippedError do
-      @assertions.skip("A custom skip message")
+      @assert.skip("A custom skip message")
     end
 
     assert_equal "A custom skip message", exception.message

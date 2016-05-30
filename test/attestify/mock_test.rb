@@ -1,13 +1,4 @@
 class Attestify::MockTest < Attestify::Test
-  class Assertable
-    include Attestify::Assertions
-    attr_reader :assertions
-
-    def initialize(assertions)
-      @assertions = assertions
-    end
-  end
-
   def setup
     @assertions = Attestify::AssertionResults.new
     @assert = Assertable.new(@assertions)
