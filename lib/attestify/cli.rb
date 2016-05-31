@@ -1,4 +1,5 @@
 require "attestify"
+require "optparse"
 
 module Attestify
   # Command Line Interface for running Attestify tests.
@@ -12,21 +13,63 @@ module Attestify
     end
 
     def reporter
-      @reporter ||= Attestify::ColorReporter.new
+      @reporter ||=
+        if options[:color]
+          Attestify::ColorReporter.new
+        else
+          Attestify::Reporter.new
+        end
+    end
+
+    def options
+      @options ||= {
+        color: true
+      }
+    end
+
+    def option_parser # rubocop:disable Metrics/MethodLength
+      @option_parser ||= OptionParser.new do |opts|
+        opts.banner = "Usage: attestify [options] [test_files ...]"
+
+        opts.on("-c", "--color", "Run with color") do
+          options[:color] = true
+        end
+
+        opts.on("-C", "--no-color", "Run without color") do
+          options[:color] = false
+        end
+
+        opts.on("-h", "--help", "Output this help") do
+          puts opts
+          ignore_reporting
+          exit
+        end
+      end
+    end
+
+    def ignore_reporting
+      @ignore_reporting = true
+    end
+
+    def parse_arguments
+      option_parser.parse!
     end
 
     def start
-      timer = Attestify::Timer.time do
-        Attestify::TestRunner.new(reporter).run
-        @exit_code = 1 unless reporter.passed?
-      end
+      timer = Attestify::Timer.time { run }
     rescue => e
       @exit_code = 2
       abort("Error running tests: #{e}\n  #{e.backtrace.join("\n  ")}")
     ensure
       reporter.timer = timer
-      reporter.report
+      reporter.report unless @ignore_reporting
       exit(@exit_code)
+    end
+
+    def run
+      parse_arguments
+      Attestify::TestRunner.new(reporter).run
+      @exit_code = 1 unless reporter.passed?
     end
   end
 end
