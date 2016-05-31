@@ -51,6 +51,19 @@ module Attestify
       end
     end
 
+    def assert_kind_of(clazz, object, message = nil)
+      if clazz.is_a?(Module)
+        record_assert(object.is_a?(clazz)) do
+          message || "Expected #{object.inspect} to be a kind_of?(#{clazz.inspect})"
+        end
+      else
+        record_assert(false) do
+          message || "Expected #{object.inspect} to be a kind_of?(#{clazz.inspect}), " \
+                     "but #{clazz.inspect} is not a class or module"
+        end
+      end
+    end
+
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
       exceptions = [StandardError] if exceptions.empty?
@@ -101,6 +114,16 @@ module Attestify
       if clazz.is_a?(Module)
         record_assert(!object.instance_of?(clazz)) do
           message || "Expected #{object.inspect} to not be an instance_of?(#{clazz.inspect})"
+        end
+      else
+        record_assert(true)
+      end
+    end
+
+    def refute_kind_of(clazz, object, message = nil)
+      if clazz.is_a?(Module)
+        record_assert(!object.is_a?(clazz)) do
+          message || "Expected #{object.inspect} to not be a kind_of?(#{clazz.inspect})"
         end
       else
         record_assert(true)

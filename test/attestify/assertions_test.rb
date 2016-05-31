@@ -174,6 +174,41 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_kind_of_with_correct_class
+    @assert.assert_kind_of Fixnum, 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_assert_kind_of_with_parent_class
+    @assert.assert_kind_of Integer, 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_assert_kind_of_with_included_module
+    @assert.assert_kind_of Enumerable, []
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_kind_of_with_different_class
+    @assert.assert_kind_of Float, 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_assert_kind_of_with_a_non_module
+    @assert.assert_kind_of "Not a module", 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_kind_of_with_custom_message
+    @assert.assert_kind_of Float, 42, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_raises
     exception = ArgumentError.new("An example error")
     result = @assert.assert_raises(ArgumentError) { raise exception }
@@ -397,6 +432,41 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_instance_of_with_custom_message
     @assert.refute_instance_of Fixnum, 42, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_passing_refute_kind_of_with_different_class
+    @assert.refute_kind_of Float, 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_refute_kind_of_with_a_non_module
+    @assert.refute_kind_of "Not a module", 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_refute_kind_of_with_correct_class
+    @assert.refute_kind_of Fixnum, 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_refute_kind_of_with_parent_class
+    @assert.refute_kind_of Integer, 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_refute_kind_of_with_included_module
+    @assert.refute_kind_of Enumerable, []
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_kind_of_with_custom_message
+    @assert.refute_kind_of Fixnum, 42, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 end
