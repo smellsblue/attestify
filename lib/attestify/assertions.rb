@@ -68,6 +68,10 @@ module Attestify
       record_assert(matcher =~ object) { message || "Expected #{matcher.inspect} =~ #{object.inspect}" }
     end
 
+    def assert_nil(object, message = nil)
+      record_assert(object.nil?) { message || "Expected #{object.inspect} to be nil" }
+    end
+
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
       exceptions = [StandardError] if exceptions.empty?
@@ -136,6 +140,10 @@ module Attestify
 
     def refute_match(matcher, object, message = nil)
       record_assert(!(matcher =~ object)) { message || "Expected not #{matcher.inspect} =~ #{object.inspect}" }
+    end
+
+    def refute_nil(object, message = nil)
+      record_assert(!object.nil?) { message || "Expected #{object.inspect} to not be nil" }
     end
 
     # TODO: Maybe implement refute_raises?
