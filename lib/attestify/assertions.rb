@@ -2,7 +2,7 @@ module Attestify
   # Assertion methods that record assertion results via the
   # `assertions` method. The `assertions` method is expected to return
   # an Attestify::AssertionResults.
-  module Assertions
+  module Assertions # rubocop:disable Metrics/ModuleLength
     def assert(value, message = nil)
       record_assert(value) { message || "Failed assertion." }
     end
@@ -27,9 +27,27 @@ module Attestify
 
     def assert_includes(collection, object, message = nil)
       if collection.respond_to?(:include?)
-        record_assert(collection.include?(object)) { message || "Expected #{collection.inspect} to include?(#{object.inspect})" }
+        record_assert(collection.include?(object)) do
+          message || "Expected #{collection.inspect} to include?(#{object.inspect})"
+        end
       else
-        record_assert(false) { message || "Expected #{collection.inspect} to include?(#{object.inspect}), but it didn't respond_to(:include?)" }
+        record_assert(false) do
+          message || "Expected #{collection.inspect} to include?(#{object.inspect}), " \
+                     "but it didn't respond_to(:include?)"
+        end
+      end
+    end
+
+    def assert_instance_of(clazz, object, message = nil)
+      if clazz.is_a?(Module)
+        record_assert(object.instance_of?(clazz)) do
+          message || "Expected #{object.inspect} to be an instance_of?(#{clazz.inspect})"
+        end
+      else
+        record_assert(false) do
+          message || "Expected #{object.inspect} to be an instance_of?(#{clazz.inspect}), " \
+                     "but #{clazz.inspect} is not a class or module"
+        end
       end
     end
 
@@ -71,7 +89,19 @@ module Attestify
 
     def refute_includes(collection, object, message = nil)
       if collection.respond_to?(:include?)
-        record_assert(!collection.include?(object)) { message || "Expected #{collection.inspect} to not include?(#{object.inspect})" }
+        record_assert(!collection.include?(object)) do
+          message || "Expected #{collection.inspect} to not include?(#{object.inspect})"
+        end
+      else
+        record_assert(true)
+      end
+    end
+
+    def refute_instance_of(clazz, object, message = nil)
+      if clazz.is_a?(Module)
+        record_assert(!object.instance_of?(clazz)) do
+          message || "Expected #{object.inspect} to not be an instance_of?(#{clazz.inspect})"
+        end
       else
         record_assert(true)
       end
