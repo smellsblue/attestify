@@ -116,6 +116,29 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_includes
+    @assert.assert_includes [1, 2, 42], 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_includes_with_include_not_implemented
+    @assert.assert_includes Object.new, 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_assert_includes_with_missing_element
+    @assert.assert_includes [1, 2, 3], 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_includes_with_custom_message
+    @assert.assert_includes [1, 2, 3], 42, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_raises
     exception = ArgumentError.new("An example error")
     result = @assert.assert_raises(ArgumentError) { raise exception }
@@ -281,6 +304,29 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_in_delta_with_custom_message
     @assert.refute_in_delta 42.0, 42.00001, 0.001, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_passing_refute_includes_with_include_not_implemented
+    @assert.refute_includes Object.new, 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_refute_includes_with_missing_element
+    @assert.refute_includes [1, 2, 3], 42
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_refute_includes
+    @assert.refute_includes [1, 2, 42], 42
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_includes_with_custom_message
+    @assert.refute_includes [1, 2, 42], 42, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 end

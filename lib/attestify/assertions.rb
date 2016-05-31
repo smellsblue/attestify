@@ -25,6 +25,14 @@ module Attestify
       end
     end
 
+    def assert_includes(collection, object, message = nil)
+      if collection.respond_to?(:include?)
+        record_assert(collection.include?(object)) { message || "Expected #{collection.inspect} to include?(#{object.inspect})" }
+      else
+        record_assert(false) { message || "Expected #{collection.inspect} to include?(#{object.inspect}), but it didn't respond_to(:include?)" }
+      end
+    end
+
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
       exceptions = [StandardError] if exceptions.empty?
@@ -58,6 +66,14 @@ module Attestify
     def refute_in_delta(expected, actual, delta = 0.001, message = nil)
       record_assert((expected - actual).abs >= delta) do
         message || "Expected #{expected.inspect} != #{actual.inspect} within #{delta.inspect}"
+      end
+    end
+
+    def refute_includes(collection, object, message = nil)
+      if collection.respond_to?(:include?)
+        record_assert(!collection.include?(object)) { message || "Expected #{collection.inspect} to not include?(#{object.inspect})" }
+      else
+        record_assert(true)
       end
     end
 
