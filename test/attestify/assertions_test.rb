@@ -209,6 +209,23 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_match
+    @assert.assert_match "abc", /b/
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_match
+    @assert.assert_match "abc", /z/
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_match_with_custom_message
+    @assert.assert_match "abc", /z/, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_raises
     exception = ArgumentError.new("An example error")
     result = @assert.assert_raises(ArgumentError) { raise exception }
@@ -467,6 +484,23 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_kind_of_with_custom_message
     @assert.refute_kind_of Fixnum, 42, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_passing_refute_match
+    @assert.refute_match "abc", /z/
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_refute_match
+    @assert.refute_match "abc", /b/
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_match_with_custom_message
+    @assert.refute_match "abc", /b/, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 end
