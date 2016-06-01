@@ -467,6 +467,18 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "bar\nqux\ncorge\n", err
   end
 
+  # NOTE: I'm not sure why, but if we output to STDOUT/STDERR in this
+  # process... it doesn't work...?
+  def test_capture_subprocess_io
+    out, err = capture_subprocess_io do
+      system "echo What do you get if you multiply six by nine?"
+      system "echo The answer is 42 1>&2"
+    end
+
+    assert_equal "What do you get if you multiply six by nine?\n", out
+    assert_equal "The answer is 42\n", err
+  end
+
   def test_flunk
     @assert.flunk
     assert_equal 0, @assertions.passed

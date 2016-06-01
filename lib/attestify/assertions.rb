@@ -1,4 +1,5 @@
 require "stringio"
+require "tempfile"
 
 module Attestify
   # Assertion methods that record assertion results via the
@@ -149,6 +150,26 @@ module Attestify
       Object.send :remove_const, :STDERR
       Object.const_set :STDOUT, original_out
       Object.const_set :STDERR, original_err
+    end
+
+    def capture_subprocess_io # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      original_out = STDOUT.dup
+      original_err = STDERR.dup
+      out = Tempfile.new("attestify.out")
+      err = Tempfile.new("attestify.err")
+      STDOUT.reopen(out.path, "w")
+      STDERR.reopen(err.path, "w")
+      yield
+      out.rewind
+      err.rewind
+      [out.read, err.read]
+    ensure
+      STDOUT.reopen(original_out)
+      STDERR.reopen(original_err)
+      out.close
+      err.close
+      out.unlink
+      err.unlink
     end
 
     def flunk(message = nil)
