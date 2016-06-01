@@ -266,6 +266,29 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_predicate
+    @assert.assert_predicate "", :empty?
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_predicate_from_false_result
+    @assert.assert_predicate "42", :empty?
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_assert_predicate_from_missing_operator
+    @assert.assert_predicate "42", :foobar
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_predicate_with_custom_message
+    @assert.assert_predicate "42", :empty?, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_raises
     exception = ArgumentError.new("An example error")
     result = @assert.assert_raises(ArgumentError) { raise exception }
@@ -581,6 +604,29 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_operator_with_custom_message
     @assert.refute_operator 4, :>=, 2, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_passing_refute_predicate_from_false_result
+    @assert.refute_predicate "42", :empty?
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_refute_predicate_from_missing_operator
+    @assert.refute_predicate "42", :foobar
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_refute_predicate
+    @assert.refute_predicate "", :empty?
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_predicate_with_custom_message
+    @assert.refute_predicate "", :empty?, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 end

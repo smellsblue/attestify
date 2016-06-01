@@ -85,6 +85,17 @@ module Attestify
       end
     end
 
+    def assert_predicate(object, predicate, message = nil)
+      if object.respond_to?(predicate)
+        record_assert(object.send(predicate)) { message || "Expected #{object.inspect} to be #{predicate}" }
+      else
+        record_assert(false) do
+          message || "Expected #{object.inspect} to be #{predicate}, " \
+                     "but #{object.inspect} didn't respond_to?(#{predicate})"
+        end
+      end
+    end
+
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
       exceptions = [StandardError] if exceptions.empty?
@@ -164,6 +175,14 @@ module Attestify
         record_assert(!left_operand.send(operator, right_operand)) do
           message || "Expected not #{left_operand.inspect} #{operator} #{right_operand.inspect}"
         end
+      else
+        record_assert(true)
+      end
+    end
+
+    def refute_predicate(object, predicate, message = nil)
+      if object.respond_to?(predicate)
+        record_assert(!object.send(predicate)) { message || "Expected not #{object.inspect} #{predicate}" }
       else
         record_assert(true)
       end
