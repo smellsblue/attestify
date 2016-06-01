@@ -46,7 +46,7 @@ module Attestify
       else
         record_assert(false) do
           message || "Expected #{object.inspect} to be an instance_of?(#{clazz.inspect}), " \
-                     "but #{clazz.inspect} is not a class or module"
+                     "but #{clazz.inspect} is not a Class or Module"
         end
       end
     end
@@ -59,7 +59,7 @@ module Attestify
       else
         record_assert(false) do
           message || "Expected #{object.inspect} to be a kind_of?(#{clazz.inspect}), " \
-                     "but #{clazz.inspect} is not a class or module"
+                     "but #{clazz.inspect} is not a Class or Module"
         end
       end
     end
@@ -108,6 +108,19 @@ module Attestify
       end
 
       return e
+    end
+
+    def assert_respond_to(object, method, message = nil)
+      if method.is_a?(String) || method.is_a?(Symbol)
+        record_assert(object.respond_to?(method)) do
+          message || "Expected #{object.inspect} to respond_to?(#{method.inspect})"
+        end
+      else
+        record_assert(false) do
+          message || "Expected #{object.inspect} to respond_to?(#{method.inspect}), " \
+                     "but #{method.inspect} is not a String or Symbol"
+        end
+      end
     end
 
     def refute(value, message = nil)
@@ -183,6 +196,16 @@ module Attestify
     def refute_predicate(object, predicate, message = nil)
       if object.respond_to?(predicate)
         record_assert(!object.send(predicate)) { message || "Expected not #{object.inspect} #{predicate}" }
+      else
+        record_assert(true)
+      end
+    end
+
+    def refute_respond_to(object, method, message = nil)
+      if method.is_a?(String) || method.is_a?(Symbol)
+        record_assert(!object.respond_to?(method)) do
+          message || "Expected #{object.inspect} to not respond_to?(#{method.inspect})"
+        end
       else
         record_assert(true)
       end

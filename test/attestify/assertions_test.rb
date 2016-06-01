@@ -359,6 +359,29 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_respond_to
+    @assert.assert_respond_to 42, :zero?
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_respond_to_with_a_method_the_object_doesnt_respond_to
+    @assert.assert_respond_to 42, :foobar
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_failing_assert_respond_to_with_a_non_string_nor_symbol
+    @assert.assert_respond_to 42, 142
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_respond_to_with_custom_message
+    @assert.assert_respond_to 42, :foobar, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_refute
     @assert.refute false
     assert_equal 1, @assertions.passed
@@ -627,6 +650,29 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_predicate_with_custom_message
     @assert.refute_predicate "", :empty?, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_passing_refute_respond_to_with_a_method_the_object_doesnt_respond_to
+    @assert.refute_respond_to 42, :foobar
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_refute_respond_to_with_a_non_string_nor_symbol
+    @assert.refute_respond_to 42, 142
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_refute_respond_to
+    @assert.refute_respond_to 42, :zero?
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_respond_to_with_custom_message
+    @assert.refute_respond_to 42, :zero?, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 end
