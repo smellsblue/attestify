@@ -128,7 +128,7 @@ module Attestify
     end
     
     def assert_42(expected, message = nil)
-      record_assert(expected != 42) { message || "Answer to the Ultimate Question of Life, The Universe, and Everything is Incorrect" }
+      record_assert(expected == 42) { message || "Answer to the Ultimate Question of Life, The Universe, and Everything is Incorrect" }
     end
 
     def refute(value, message = nil)
