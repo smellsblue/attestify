@@ -72,6 +72,19 @@ module Attestify
       record_assert(object.nil?) { message || "Expected #{object.inspect} to be nil" }
     end
 
+    def assert_operator(left_operand, operator, right_operand, message = nil)
+      if left_operand.respond_to?(operator)
+        record_assert(left_operand.send(operator, right_operand)) do
+          message || "Expected #{left_operand.inspect} #{operator} #{right_operand.inspect}"
+        end
+      else
+        record_assert(false) do
+          message || "Expected #{left_operand.inspect} #{operator} #{right_operand.inspect}, " \
+                     "but #{left_operand.inspect} didn't respond_to?(#{operator})"
+        end
+      end
+    end
+
     def assert_raises(*exceptions)
       message = exceptions.pop if exceptions.last.is_a?(String)
       exceptions = [StandardError] if exceptions.empty?
@@ -146,7 +159,15 @@ module Attestify
       record_assert(!object.nil?) { message || "Expected #{object.inspect} to not be nil" }
     end
 
-    # TODO: Maybe implement refute_raises?
+    def refute_operator(left_operand, operator, right_operand, message = nil)
+      if left_operand.respond_to?(operator)
+        record_assert(!left_operand.send(operator, right_operand)) do
+          message || "Expected not #{left_operand.inspect} #{operator} #{right_operand.inspect}"
+        end
+      else
+        record_assert(true)
+      end
+    end
 
     def skip(message = "Skipped this test")
       raise Attestify::SkippedError, message

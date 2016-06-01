@@ -59,7 +59,7 @@ module Attestify
       timer = Attestify::Timer.time { run }
     rescue => e
       @exit_code = 2
-      abort("Error running tests: #{e}\n  #{e.backtrace.join("\n  ")}")
+      STDERR.puts("Error running tests: #{e}\n  #{e.backtrace.join("\n  ")}")
     ensure
       reporter.timer = timer
       reporter.report unless @ignore_reporting
