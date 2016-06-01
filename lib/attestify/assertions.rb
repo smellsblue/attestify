@@ -1,3 +1,5 @@
+require "stringio"
+
 module Attestify
   # Assertion methods that record assertion results via the
   # `assertions` method. The `assertions` method is expected to return
@@ -125,6 +127,28 @@ module Attestify
 
     def assert_same(expected, actual, message = nil)
       record_assert(expected.equal?(actual)) { message || "Expected #{expected.inspect} is equal?(#{actual.inspect})" }
+    end
+
+    def capture_io # rubocop:disable Metrics/MethodLength
+      original_out = $stdout
+      original_err = $stderr
+      out = StringIO.new
+      err = StringIO.new
+      $stdout = out
+      $stderr = err
+      Object.send :remove_const, :STDOUT
+      Object.send :remove_const, :STDERR
+      Object.const_set :STDOUT, out
+      Object.const_set :STDERR, err
+      yield
+      [out.string, err.string]
+    ensure
+      $stdout = original_out
+      $stderr = original_err
+      Object.send :remove_const, :STDOUT
+      Object.send :remove_const, :STDERR
+      Object.const_set :STDOUT, original_out
+      Object.const_set :STDERR, original_err
     end
 
     def flunk(message = nil)

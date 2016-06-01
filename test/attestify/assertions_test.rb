@@ -400,6 +400,73 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_capture_io_restores_output
+    original_out = STDOUT
+    original_err = STDERR
+    capture_io { }
+    assert_same original_out, STDOUT
+    assert_same original_out, $stdout
+    assert_same original_err, STDERR
+    assert_same original_err, $stderr
+  end
+
+  def test_capture_io_restores_output_after_error
+    original_out = STDOUT
+    original_err = STDERR
+
+    begin
+      capture_io { raise "Error" }
+    rescue # rubocop:disable Lint/HandleExceptions
+    end
+
+    assert_same original_out, STDOUT
+    assert_same original_out, $stdout
+    assert_same original_err, STDERR
+    assert_same original_err, $stderr
+  end
+
+  def test_capture_io_with_no_output
+    out, err = capture_io { }
+    assert_equal "", out
+    assert_equal "", err
+  end
+
+  def test_capture_io_with_output_to_just_stdout
+    out, err = capture_io { puts "The answer is 42" }
+    assert_equal "The answer is 42\n", out
+    assert_equal "", err
+  end
+
+  def test_capture_io_with_output_to_just_stderr
+    out, err = capture_io { warn "The answer is 42" }
+    assert_equal "", out
+    assert_equal "The answer is 42\n", err
+  end
+
+  def test_capture_io_with_output_to_stdout_and_stderr
+    out, err = capture_io do
+      puts "What do you get if you multiply six by nine?"
+      warn "The answer is 42"
+    end
+
+    assert_equal "What do you get if you multiply six by nine?\n", out
+    assert_equal "The answer is 42\n", err
+  end
+
+  def test_capture_io_with_output_via_global_and_constant_and_methods
+    out, err = capture_io do
+      puts "foo"
+      warn "bar"
+      $stdout.puts "baz"
+      $stderr.puts "qux"
+      STDOUT.puts "quux"
+      STDERR.puts "corge"
+    end
+
+    assert_equal "foo\nbaz\nquux\n", out
+    assert_equal "bar\nqux\ncorge\n", err
+  end
+
   def test_flunk
     @assert.flunk
     assert_equal 0, @assertions.passed
