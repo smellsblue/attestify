@@ -400,6 +400,29 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_flunk
+    @assert.flunk
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_flunk_custom_message
+    @assert.flunk "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_pass
+    @assert.pass
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_pass_custom_message
+    @assert.pass "Custom message"
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
   def test_passing_refute
     @assert.refute false
     assert_equal 1, @assertions.passed

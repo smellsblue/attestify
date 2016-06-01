@@ -127,6 +127,14 @@ module Attestify
       record_assert(expected.equal?(actual)) { message || "Expected #{expected.inspect} is equal?(#{actual.inspect})" }
     end
 
+    def flunk(message = nil)
+      record_assert(false) { message || "Flunked assertion." }
+    end
+
+    def pass(_message = nil)
+      record_assert(true)
+    end
+
     def refute(value, message = nil)
       record_assert(!value) { message || "Failed refutation." }
     end
@@ -135,7 +143,7 @@ module Attestify
       if object.respond_to?(:empty?)
         record_assert(!object.empty?) { message || "Expected #{object.inspect} to not be empty" }
       else
-        record_assert(true)
+        pass
       end
     end
 
@@ -155,7 +163,7 @@ module Attestify
           message || "Expected #{collection.inspect} to not include?(#{object.inspect})"
         end
       else
-        record_assert(true)
+        pass
       end
     end
 
@@ -165,7 +173,7 @@ module Attestify
           message || "Expected #{object.inspect} to not be an instance_of?(#{clazz.inspect})"
         end
       else
-        record_assert(true)
+        pass
       end
     end
 
@@ -175,7 +183,7 @@ module Attestify
           message || "Expected #{object.inspect} to not be a kind_of?(#{clazz.inspect})"
         end
       else
-        record_assert(true)
+        pass
       end
     end
 
@@ -193,7 +201,7 @@ module Attestify
           message || "Expected not #{left_operand.inspect} #{operator} #{right_operand.inspect}"
         end
       else
-        record_assert(true)
+        pass
       end
     end
 
@@ -201,7 +209,7 @@ module Attestify
       if object.respond_to?(predicate)
         record_assert(!object.send(predicate)) { message || "Expected not #{object.inspect} #{predicate}" }
       else
-        record_assert(true)
+        pass
       end
     end
 
@@ -211,7 +219,7 @@ module Attestify
           message || "Expected #{object.inspect} to not respond_to?(#{method.inspect})"
         end
       else
-        record_assert(true)
+        pass
       end
     end
 
