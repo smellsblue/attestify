@@ -123,6 +123,10 @@ module Attestify
       end
     end
 
+    def assert_same(expected, actual, message = nil)
+      record_assert(expected.equal?(actual)) { message || "Expected #{expected.inspect} is equal?(#{actual.inspect})" }
+    end
+
     def refute(value, message = nil)
       record_assert(!value) { message || "Failed refutation." }
     end
@@ -208,6 +212,12 @@ module Attestify
         end
       else
         record_assert(true)
+      end
+    end
+
+    def refute_same(expected, actual, message = nil)
+      record_assert(!expected.equal?(actual)) do
+        message || "Expected #{expected.inspect} is not equal?(#{actual.inspect})"
       end
     end
 

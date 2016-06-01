@@ -382,6 +382,24 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_same
+    object = Object.new
+    @assert.assert_same object, object
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_failing_assert_same
+    @assert.assert_same Object.new, Object.new
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_assert_same_with_custom_message
+    @assert.assert_same Object.new, Object.new, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_refute
     @assert.refute false
     assert_equal 1, @assertions.passed
@@ -673,6 +691,25 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_respond_to_with_custom_message
     @assert.refute_respond_to 42, :zero?, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_failing_refute_same
+    @assert.refute_same Object.new, Object.new
+    assert_equal 1, @assertions.passed
+    assert_equal 0, @assertions.failed
+  end
+
+  def test_passing_refute_same
+    object = Object.new
+    @assert.refute_same object, object
+    assert_equal 0, @assertions.passed
+    assert_equal 1, @assertions.failed
+  end
+
+  def test_refute_same_with_custom_message
+    object = Object.new
+    @assert.refute_same object, object, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 end
