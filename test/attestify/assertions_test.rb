@@ -442,6 +442,54 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_silent
+    @assert.assert_silent { }
+    assert_passes
+  end
+
+  def test_failing_assert_silent_with_empty_newline_to_stdout
+    @assert.assert_silent { puts }
+    assert_fails
+  end
+
+  def test_failing_assert_silent_with_message_to_stdout
+    @assert.assert_silent { puts "Foobar" }
+    assert_fails
+  end
+
+  def test_failing_assert_silent_with_empty_newline_to_stderr
+    @assert.assert_silent { warn "" }
+    assert_fails
+  end
+
+  def test_failing_assert_silent_with_message_to_stderr
+    @assert.assert_silent { warn "Foobar" }
+    assert_fails
+  end
+
+  def test_failing_assert_silent_with_empty_newline_to_both
+    @assert.assert_silent do
+      puts
+      warn ""
+    end
+
+    assert_fails
+  end
+
+  def test_failing_assert_silent_with_message_to_both
+    @assert.assert_silent do
+      puts "Foobar"
+      warn "Bazqux"
+    end
+
+    assert_fails
+  end
+
+  def test_assert_silent_with_custom_message
+    @assert.assert_silent("Custom message") { puts "Foobar" }
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_42_same_integer
     @assert.assert_42 42
     assert_passes

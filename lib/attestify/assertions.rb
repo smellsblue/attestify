@@ -138,6 +138,15 @@ module Attestify
       record_assert(expected.equal?(actual)) { message || "Expected #{expected.inspect} is equal?(#{actual.inspect})" }
     end
 
+    def assert_silent(message = nil)
+      stdout, stderr = capture_io { yield }
+      assertion = Attestify::Assertions::OutputAssertion.new("", "", stdout, stderr, message)
+
+      record_assert(assertion.assert) do
+        message || "Expected silence, but instead got: $stdout: #{stdout.inspect}, and $stderr: #{stderr.inspect}"
+      end
+    end
+
     def assert_42(expected, message = nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/LineLength, Metrics/MethodLength, Metrics/PerceivedComplexity
       record_assert(
         if expected.is_a?(Numeric)
