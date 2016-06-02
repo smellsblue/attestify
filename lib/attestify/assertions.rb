@@ -6,6 +6,8 @@ module Attestify
   # `assertions` method. The `assertions` method is expected to return
   # an Attestify::AssertionResults.
   module Assertions # rubocop:disable Metrics/ModuleLength
+    autoload :OutputAssertion, "attestify/assertions/output_assertion"
+
     def assert(value, message = nil)
       record_assert(value) { message || "Failed assertion." }
     end
@@ -90,33 +92,8 @@ module Attestify
 
     def assert_output(expected_stdout = nil, expected_stderr = nil, message = nil)
       stdout, stderr = capture_io { yield }
-
-      output_checker = lambda do |expected, actual|
-        next true unless expected
-
-        if expected.is_a?(String)
-          expected == actual
-        else
-          actual =~ expected
-        end
-      end
-
-      record_assert(output_checker.call(expected_stdout, stdout) && output_checker.call(expected_stderr, stderr)) do
-        next message if message
-
-        output_message = lambda do |label, expected, actual|
-          next nil unless actual
-
-          if expected.is_a?(String)
-            "#{label}: #{expected.inspect} == #{actual.inspect}"
-          else
-            "#{label}: #{actual.inspect} =~ #{expected.inspect}"
-          end
-        end
-
-        messages = [output_message.call("$stdout", expected_stdout, stdout), output_message.call("$stderr", expected_stderr, stderr)]
-        "Expected #{messages.compact.join(", and ")}"
-      end
+      assertion = Attestify::Assertions::OutputAssertion.new(expected_stdout, expected_stderr, stdout, stderr, message)
+      record_assert(assertion.assert) { assertion.message }
     end
 
     def assert_predicate(object, predicate, message = nil)
