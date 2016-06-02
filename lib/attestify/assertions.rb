@@ -88,6 +88,37 @@ module Attestify
       end
     end
 
+    def assert_output(expected_stdout = nil, expected_stderr = nil, message = nil)
+      stdout, stderr = capture_io { yield }
+
+      output_checker = lambda do |expected, actual|
+        next true unless expected
+
+        if expected.is_a?(String)
+          expected == actual
+        else
+          actual =~ expected
+        end
+      end
+
+      record_assert(output_checker.call(expected_stdout, stdout) && output_checker.call(expected_stderr, stderr)) do
+        next message if message
+
+        output_message = lambda do |label, expected, actual|
+          next nil unless actual
+
+          if expected.is_a?(String)
+            "#{label}: #{expected.inspect} == #{actual.inspect}"
+          else
+            "#{label}: #{actual.inspect} =~ #{expected.inspect}"
+          end
+        end
+
+        messages = [output_message.call("$stdout", expected_stdout, stdout), output_message.call("$stderr", expected_stderr, stderr)]
+        "Expected #{messages.compact.join(", and ")}"
+      end
+    end
+
     def assert_predicate(object, predicate, message = nil)
       if object.respond_to?(predicate)
         record_assert(object.send(predicate)) { message || "Expected #{object.inspect} to be #{predicate}" }

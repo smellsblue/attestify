@@ -233,6 +233,96 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_output_ignore_both
+    @assert.assert_output do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_passes
+  end
+
+  def test_passing_assert_output_ignore_stdout
+    @assert.assert_output nil, "Is 42\n" do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_passes
+  end
+
+  def test_passing_assert_output_ignore_stderr
+    @assert.assert_output "The Answer\n", nil do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_passes
+  end
+
+  def test_passing_assert_output_with_strings
+    @assert.assert_output "The Answer\n", "Is 42\n" do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_passes
+  end
+
+  def test_passing_assert_output_with_regexes
+    @assert.assert_output(/Answer/, /42/) do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_passes
+  end
+
+  def test_failing_assert_output_stdout_wrong_string
+    @assert.assert_output "Incorrect Value\n", "Is 42\n" do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_fails
+  end
+
+  def test_failing_assert_output_stdout_wrong_regex
+    @assert.assert_output(/Wrong/, "Is 42\n") do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_fails
+  end
+
+  def test_failing_assert_output_stderr_wrong_string
+    @assert.assert_output "The Answer\n", "Wrong Value\n" do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_fails
+  end
+
+  def test_failing_assert_output_stderr_wrong_regex
+    @assert.assert_output "The Answer\n", /Wrong/ do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_fails
+  end
+
+  def test_assert_output_with_custom_message
+    @assert.assert_output "Wrong", "Wrong", "Custom message" do
+      puts "The Answer"
+      warn "Is 42"
+    end
+
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_passing_assert_predicate
     @assert.assert_predicate "", :empty?
     assert_passes
