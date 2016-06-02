@@ -352,6 +352,79 @@ class Attestify::AssertionsTest < Attestify::Test
     assert_equal "Custom message", @assertions.failure_details.first.message
   end
 
+  def test_passing_assert_42_same_integer
+    @assert.assert_42 42
+    assert_passes
+  end
+
+  def test_passing_assert_42_same_float
+    @assert.assert_42 42.0
+    assert_passes
+  end
+
+  def test_passing_assert_42_same_string_of_integer
+    @assert.assert_42 "42"
+    assert_passes
+  end
+
+  def test_passing_assert_42_same_string_of_words
+    @assert.assert_42 "forty-two"
+    assert_passes
+  end
+
+  def test_passing_assert_42_same_string_of_words_upcase
+    @assert.assert_42 "FORTY-TWO"
+    assert_passes
+  end
+
+  def test_passing_assert_42_with_method_of_number
+    object = Object.new
+    object.send(:define_singleton_method, "42?") { true }
+    @assert.assert_42 object
+    assert_passes
+  end
+
+  def test_passing_assert_42_with_method_of_words
+    object = Object.new
+    object.send(:define_singleton_method, :forty_two?) { true }
+    @assert.assert_42 object
+    assert_passes
+  end
+
+  def test_failing_assert_42_not_a_number
+    @assert.assert_42 Object.new
+    assert_fails
+  end
+
+  def test_failing_assert_42_wrong_number
+    @assert.assert_42 43
+    assert_fails
+  end
+
+  def test_failing_assert_42_wrong_string
+    @assert.assert_42 "forty-three"
+    assert_fails
+  end
+
+  def test_failing_assert_42_method_of_number_but_returns_false
+    object = Object.new
+    object.send(:define_singleton_method, "42?") { false }
+    @assert.assert_42 object
+    assert_fails
+  end
+
+  def test_failing_assert_42_method_of_words_but_returns_false
+    object = Object.new
+    object.send(:define_singleton_method, :forty_two?) { false }
+    @assert.assert_42 object
+    assert_fails
+  end
+
+  def test_assert_42_with_custom_message
+    @assert.assert_42 Object.new, "Custom message"
+    assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
   def test_capture_io_restores_output
     original_out = STDOUT
     original_err = STDERR
@@ -721,6 +794,21 @@ class Attestify::AssertionsTest < Attestify::Test
     object = Object.new
     @assert.refute_same object, object, "Custom message"
     assert_equal "Custom message", @assertions.failure_details.first.message
+  end
+
+  def test_failing_refute_42_with_42
+    @assert.refute_42 42
+    assert_fails
+  end
+
+  def test_failing_refute_42_with_non_42
+    @assert.refute_42 43
+    assert_fails
+  end
+
+  def test_refute_42_with_custom_message_doesnt_work
+    @assert.refute_42 Object.new, "Custom message"
+    refute_equal "Custom message", @assertions.failure_details.first.message
   end
 
   private

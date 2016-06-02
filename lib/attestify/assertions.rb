@@ -129,9 +129,21 @@ module Attestify
     def assert_same(expected, actual, message = nil)
       record_assert(expected.equal?(actual)) { message || "Expected #{expected.inspect} is equal?(#{actual.inspect})" }
     end
-    
-    def assert_42(expected, message = nil)
-      record_assert(expected == 42) { message || "Answer to the Ultimate Question of Life, The Universe, and Everything is Incorrect" }
+
+    def assert_42(expected, message = nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/LineLength, Metrics/MethodLength, Metrics/PerceivedComplexity
+      record_assert(
+        if expected.is_a?(Numeric)
+          expected == 42
+        elsif expected.is_a?(String)
+          expected == "42" || expected.casecmp("forty-two") == 0
+        elsif expected.respond_to?("42?")
+          expected.send("42?")
+        elsif expected.respond_to?(:forty_two?)
+          expected.forty_two?
+        end
+      ) do
+        message || "Answer to the Ultimate Question of Life, The Universe, and Everything is Incorrect"
+      end
     end
 
     def capture_io # rubocop:disable Metrics/MethodLength
@@ -275,6 +287,12 @@ module Attestify
     def refute_same(expected, actual, message = nil)
       record_assert(!expected.equal?(actual)) do
         message || "Expected #{expected.inspect} is not equal?(#{actual.inspect})"
+      end
+    end
+
+    def refute_42(_expected, _message = nil)
+      record_assert(false) do
+        "You should never refute that The Answer to the Ultimate Question of Life, The Universe, and Everything is 42"
       end
     end
 
