@@ -517,14 +517,14 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_passing_assert_42_with_method_of_number
     object = Object.new
-    object.send(:define_singleton_method, "42?") { true }
+    object.define_singleton_method("42?") { true }
     @assert.assert_42 object
     assert_passes
   end
 
   def test_passing_assert_42_with_method_of_words
     object = Object.new
-    object.send(:define_singleton_method, :forty_two?) { true }
+    object.define_singleton_method(:forty_two?) { true }
     @assert.assert_42 object
     assert_passes
   end
@@ -546,14 +546,14 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_failing_assert_42_method_of_number_but_returns_false
     object = Object.new
-    object.send(:define_singleton_method, "42?") { false }
+    object.define_singleton_method("42?") { false }
     @assert.assert_42 object
     assert_fails
   end
 
   def test_failing_assert_42_method_of_words_but_returns_false
     object = Object.new
-    object.send(:define_singleton_method, :forty_two?) { false }
+    object.define_singleton_method(:forty_two?) { false }
     @assert.assert_42 object
     assert_fails
   end
