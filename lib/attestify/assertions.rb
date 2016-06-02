@@ -129,6 +129,10 @@ module Attestify
     def assert_same(expected, actual, message = nil)
       record_assert(expected.equal?(actual)) { message || "Expected #{expected.inspect} is equal?(#{actual.inspect})" }
     end
+    
+    def assert_42(expected, message = nil)
+      record_assert(expected == 42) { message || "Answer to the Ultimate Question of Life, The Universe, and Everything is Incorrect" }
+    end
 
     def capture_io # rubocop:disable Metrics/MethodLength
       original_out = $stdout
