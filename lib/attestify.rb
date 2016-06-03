@@ -8,6 +8,7 @@ module Attestify
   autoload :Reporter,         "attestify/reporter"
   autoload :SkippedError,     "attestify/skipped_error"
   autoload :Test,             "attestify/test"
+  autoload :TestList,         "attestify/test_list"
   autoload :TestRunner,       "attestify/test_runner"
   autoload :Timer,            "attestify/timer"
   autoload :VERSION,          "attestify/version"
