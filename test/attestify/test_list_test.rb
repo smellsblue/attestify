@@ -29,18 +29,18 @@ class Attestify::TestListTest < Attestify::Test
   end
 
   def test_explicit_valid_file
-    tests = Attestify::TestList.new(["./test/attestify/assertions_test.rb"])
-    assert_same_files ["./test/attestify/assertions_test.rb"], tests.test_files
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb"])
+    assert_same_files ["./test/attestify/example_test.rb"], tests.test_files
   end
 
   def test_explicit_valid_and_missing_files
-    tests = Attestify::TestList.new(["./test/missing_test_file.rb", "./test/attestify/assertions_test.rb"])
-    assert_same_files ["./test/attestify/assertions_test.rb"], tests.test_files
+    tests = Attestify::TestList.new(["./test/missing_test_file.rb", "./test/attestify/example_test.rb"])
+    assert_same_files ["./test/attestify/example_test.rb"], tests.test_files
   end
 
   def test_explicit_multiple_files
-    tests = Attestify::TestList.new(["./test/attestify/assertions_test.rb", "./test/attestify/test_test.rb"])
-    assert_same_files ["./test/attestify/assertions_test.rb", "./test/attestify/test_test.rb"], tests.test_files
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb", "./test/attestify/example/nested_test.rb"])
+    assert_same_files ["./test/attestify/example_test.rb", "./test/attestify/example/nested_test.rb"], tests.test_files
   end
 
   def test_providing_directory
@@ -51,10 +51,10 @@ class Attestify::TestListTest < Attestify::Test
   end
 
   def test_providing_directory_and_files
-    tests = Attestify::TestList.new(["./test/attestify/assertions_test.rb", "./test/attestify/example"])
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb", "./test/attestify/example"])
     test_files = Dir["./test/attestify/example/**/*_test.rb"]
     refute_empty test_files
-    test_files << "./test/attestify/assertions_test.rb"
+    test_files << "./test/attestify/example_test.rb"
     assert_same_files test_files, tests.test_files
   end
 
