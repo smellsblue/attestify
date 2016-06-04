@@ -12,11 +12,21 @@ module Attestify
       @test_files ||=
         begin
           if @provided_files
-            @provided_files.select { |x| File.file?(x) }
+            @provided_files.map { |path| all_test_files_for(path) }.flatten.compact
           else
-            Dir[File.join(dir, "**/*_test.rb")]
+            all_test_files_for(dir)
           end
         end
+    end
+
+    private
+
+    def all_test_files_for(path)
+      if File.directory?(path)
+        Dir[File.join(path, "**/*_test.rb")]
+      elsif File.file?(path)
+        path
+      end
     end
   end
 end

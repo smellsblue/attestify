@@ -31,6 +31,35 @@ class Attestify::TestListTest < Attestify::Test
     assert_same_files ["./test/attestify/assertions_test.rb", "./test/attestify/test_test.rb"], tests.test_files
   end
 
+  def test_providing_directory
+    tests = Attestify::TestList.new(["./test/attestify"])
+    assert_same_file "./test", tests.dir
+    test_files = Dir["./test/attestify/**/*_test.rb"]
+    refute_empty test_files
+    assert_same_files test_files, tests.test_files
+  end
+
+  def test_providing_directory_and_files
+    tests = Attestify::TestList.new(["./test/attestify/assertions_test.rb", "./test/attestify/example"])
+    assert_same_file "./test", tests.dir
+    test_files = Dir["./test/attestify/example/**/*_test.rb"]
+    refute_empty test_files
+    test_files << "./test/attestify/assertions_test.rb"
+    assert_same_files test_files, tests.test_files
+  end
+
+  def test_change_base_test_directory_to_missing_directory
+    skip "It should be an empty set of files"
+  end
+
+  def test_change_base_test_directory_to_another_directory
+    skip "It should contain those tests"
+  end
+
+  def test_change_base_test_directory_to_another_directory_that_doesnt_have_test_helper
+    skip "It should have a nil test helper file"
+  end
+
   private
 
   def assert_same_file(expected, actual)
