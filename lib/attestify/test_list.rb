@@ -16,7 +16,7 @@ module Attestify
     def test_files
       @test_files ||=
         begin
-          if @provided_files
+          if @provided_files && !@provided_files.empty?
             @provided_files.map { |path| all_test_files_for(path) }.flatten.compact
           else
             all_test_files_for(dir) || []

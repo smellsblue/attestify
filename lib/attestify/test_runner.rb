@@ -3,14 +3,11 @@ require "attestify"
 module Attestify
   # A basic test runner to run all tests.
   class TestRunner
-    attr_reader :reporter
+    attr_reader :test_list, :reporter
 
-    def initialize(reporter)
+    def initialize(test_list, reporter)
+      @test_list = test_list
       @reporter = reporter
-    end
-
-    def directory
-      "."
     end
 
     def run
@@ -21,19 +18,17 @@ module Attestify
 
     private
 
-    # Checks if the file in the relative path exists and then yields
-    # the block with the full path if so.
-    def file(path)
-      file = File.join(directory, path)
-      yield file if File.exist?(path)
-    end
-
     def require_helper
-      file("test/test_helper.rb") { |f| require f }
+      require_real_file test_list.test_helper_file
     end
 
     def require_tests
-      Dir[File.join(directory, "test/**/*_test.rb")].each { |f| require f }
+      test_list.test_files.each { |f| require_real_file f }
+    end
+
+    def require_real_file(file)
+      return unless file
+      require File.realpath(file)
     end
 
     def run_tests

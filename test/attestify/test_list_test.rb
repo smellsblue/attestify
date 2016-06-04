@@ -8,6 +8,15 @@ class Attestify::TestListTest < Attestify::Test
     assert_same_files test_files, tests.test_files
   end
 
+  def test_exmpty_explicit_files_uses_correct_dir_and_has_correct_files
+    tests = Attestify::TestList.new([])
+    assert_same_file "./test", tests.dir
+    assert_same_file "./test/test_helper.rb", tests.test_helper_file
+    test_files = Dir["./test/**/*_test.rb"]
+    refute_empty test_files
+    assert_same_files test_files, tests.test_files
+  end
+
   def test_explicit_files_doesnt_change_other_attributes
     tests = Attestify::TestList.new(["./test/some_test_file.rb"])
     assert_same_file "./test", tests.dir

@@ -12,6 +12,10 @@ module Attestify
       new.start
     end
 
+    def test_list
+      @test_list ||= Attestify::TestList.new(ARGV)
+    end
+
     def reporter
       @reporter ||=
         if options[:color]
@@ -68,7 +72,7 @@ module Attestify
 
     def run
       parse_arguments
-      Attestify::TestRunner.new(reporter).run
+      Attestify::TestRunner.new(test_list, reporter).run
       @exit_code = 1 unless reporter.passed?
     end
   end
