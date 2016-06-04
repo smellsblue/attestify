@@ -24,6 +24,10 @@ module Attestify
         end
     end
 
+    def run?(_test_class, _method)
+      true
+    end
+
     private
 
     def all_test_files_for(path)

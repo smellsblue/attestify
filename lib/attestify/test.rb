@@ -18,13 +18,14 @@ module Attestify
       @tests ||= []
     end
 
-    def self.run(reporter)
+    def self.run(reporter, filter = nil)
       runnable_methods.each do |method|
-        run_one_method(self, method, reporter)
+        run_one_method(self, method, reporter, filter)
       end
     end
 
-    def self.run_one_method(test_class, method, reporter)
+    def self.run_one_method(test_class, method, reporter, filter = nil)
+      return if filter && !filter.run?(test_class, method)
       reporter.record test_class.new(method).run
     end
 

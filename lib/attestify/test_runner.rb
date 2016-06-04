@@ -26,6 +26,8 @@ module Attestify
       test_list.test_files.each { |f| require_real_file f }
     end
 
+    # If we don't require via realpath, some relative paths will be
+    # rejected as not being in Ruby's path.
     def require_real_file(file)
       return unless file
       require File.realpath(file)
@@ -33,7 +35,7 @@ module Attestify
 
     def run_tests
       Attestify::Test.tests.each do |test|
-        test.run(reporter)
+        test.run(reporter, test_list)
       end
     end
 
