@@ -16,7 +16,7 @@ module Attestify
     def test_files
       @test_files ||=
         begin
-          if @provided_files && !@provided_files.empty?
+          if provided_files?
             @provided_files.map { |path| all_test_files_for(path) }.flatten.compact
           else
             all_test_files_for(dir) || []
@@ -24,11 +24,27 @@ module Attestify
         end
     end
 
-    def run?(_test_class, _method)
-      true
+    def run?(test_class, method)
+      if provided_files?
+        real_test_files.any? { |file| file == real_test_file(test_class, method) }
+      else
+        true
+      end
     end
 
     private
+
+    def real_test_files
+      @real_test_files ||= test_files.map { |file| File.realpath(file) }
+    end
+
+    def real_test_file(test_class, method)
+      File.realpath(test_class.instance_method(method).source_location.first)
+    end
+
+    def provided_files?
+      @provided_files && !@provided_files.empty?
+    end
 
     def all_test_files_for(path)
       if File.directory?(path)

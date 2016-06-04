@@ -1,3 +1,6 @@
+require_relative "example_test.rb"
+require_relative "example/nested_test.rb"
+
 class Attestify::TestListTest < Attestify::Test
   def test_no_explicit_files_uses_correct_dir_and_has_correct_files
     tests = Attestify::TestList.new
@@ -6,6 +9,14 @@ class Attestify::TestListTest < Attestify::Test
     test_files = Dir["./test/**/*_test.rb"]
     refute_empty test_files
     assert_same_files test_files, tests.test_files
+  end
+
+  def test_no_explicit_files_doesnt_filter_tests
+    tests = Attestify::TestList.new
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+    assert tests.run?(Attestify::ExampleNestedTest, :test_something_important)
+    assert tests.run?(Attestify::ExampleNestedTest, :test_something_even_more_important)
   end
 
   def test_exmpty_explicit_files_uses_correct_dir_and_has_correct_files
@@ -33,6 +44,14 @@ class Attestify::TestListTest < Attestify::Test
     assert_same_files ["./test/attestify/example_test.rb"], tests.test_files
   end
 
+  def test_explicit_file_filters_all_but_that_file
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb"])
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+    refute tests.run?(Attestify::ExampleNestedTest, :test_something_important)
+    refute tests.run?(Attestify::ExampleNestedTest, :test_something_even_more_important)
+  end
+
   def test_explicit_valid_and_missing_files
     tests = Attestify::TestList.new(["./test/missing_test_file.rb", "./test/attestify/example_test.rb"])
     assert_same_files ["./test/attestify/example_test.rb"], tests.test_files
@@ -48,6 +67,14 @@ class Attestify::TestListTest < Attestify::Test
     test_files = Dir["./test/attestify/**/*_test.rb"]
     refute_empty test_files
     assert_same_files test_files, tests.test_files
+  end
+
+  def test_providing_directory_filters_files_except_in_the_directory
+    tests = Attestify::TestList.new(["./test/attestify/example"])
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+    assert tests.run?(Attestify::ExampleNestedTest, :test_something_important)
+    assert tests.run?(Attestify::ExampleNestedTest, :test_something_even_more_important)
   end
 
   def test_providing_directory_and_files
