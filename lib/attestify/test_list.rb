@@ -18,11 +18,7 @@ module Attestify
     end
 
     def run?(test_class, method)
-      if provided_files?
-        test_filters.any? { |filter| filter.run?(test_class, method) }
-      else
-        true
-      end
+      test_filters.any? { |filter| filter.run?(test_class, method) }
     end
 
     private
