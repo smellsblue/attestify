@@ -131,6 +131,12 @@ class Attestify::TestListTest < Attestify::Test
     refute tests.run?(Attestify::ExampleTest, :test_an_important_answer)
   end
 
+  def test_explicit_file_with_line_number_inside_later_method_filters_all_but_that_file_and_the_specific_test_defined_above_it
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb:13"])
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+  end
+
   def test_explicit_file_with_line_number_between_methods_filters_all_but_that_file_and_the_specific_test_defined_above_it
     tests = Attestify::TestList.new(["./test/attestify/example_test.rb:11"])
     assert tests.run?(Attestify::ExampleTest, :test_an_important_question)

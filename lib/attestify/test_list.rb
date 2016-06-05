@@ -75,7 +75,7 @@ module Attestify
 
       def line_matches?(source_location)
         if line
-          line == source_location.last
+          line >= source_location.last
         else
           true
         end
