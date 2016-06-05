@@ -109,6 +109,40 @@ class Attestify::TestListTest < Attestify::Test
     assert_nil tests.test_helper_file
   end
 
+  def test_explicit_valid_file_with_line_number
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb:7"])
+    assert_same_files ["./test/attestify/example_test.rb"], tests.test_files
+  end
+
+  def test_explicit_missing_file_with_line_number
+    tests = Attestify::TestList.new(["./test/missing_test_file.rb:7"])
+    assert_empty tests.test_files
+  end
+
+  def test_explicit_file_with_exact_line_number_filters_all_but_that_file_and_the_specific_test_defined_on_it
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb:7"])
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+  end
+
+  def test_explicit_file_with_line_number_inside_method_filters_all_but_that_file_and_the_specific_test_defined_above_it
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb:9"])
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+  end
+
+  def test_explicit_file_with_line_number_between_methods_filters_all_but_that_file_and_the_specific_test_defined_above_it
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb:11"])
+    assert tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+  end
+
+  def test_explicit_file_with_line_number_above_all_methods_filters_all_methods_out
+    tests = Attestify::TestList.new(["./test/attestify/example_test.rb:5"])
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_question)
+    refute tests.run?(Attestify::ExampleTest, :test_an_important_answer)
+  end
+
   private
 
   def assert_same_file(expected, actual)
