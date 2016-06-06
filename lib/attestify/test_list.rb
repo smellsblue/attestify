@@ -48,6 +48,9 @@ module Attestify
       end
     end
 
+    # Filters tests that aren't defined in the provided file. If a
+    # line is provided, then only the test defined above that line
+    # will not be filtered.
     class FileFilter
       attr_reader :file, :line
 
@@ -63,19 +66,18 @@ module Attestify
       end
 
       def run?(test_class, method)
-        source_location = real_source_location(test_class, method)
-        file_matches?(source_location) && line_matches?(source_location)
+        file_matches?(test_class, method) && line_matches?(test_class, method)
       end
 
       private
 
-      def file_matches?(source_location)
-        real_file == source_location.first
+      def file_matches?(test_class, method)
+        real_file == Attestify::TestList::RealSourceLocationCache[test_class].real_file(method)
       end
 
-      def line_matches?(source_location)
+      def line_matches?(test_class, method)
         if line
-          line >= source_location.last
+          Attestify::TestList::RealSourceLocationCache[test_class].in_method?(method, line)
         else
           true
         end
@@ -84,10 +86,75 @@ module Attestify
       def real_file
         @real_file ||= File.realpath(file)
       end
+    end
 
-      def real_source_location(test_class, method)
-        test_class.instance_method(method).source_location.tap do |result|
-          result[0] = File.realpath(result[0])
+    # Helper class to keep track of source locations of methods for
+    # tests.
+    class TestClassSourceLocations
+      def initialize(test_class)
+        @test_class = test_class
+      end
+
+      def real_file(method)
+        real_source_locations[method].first
+      end
+
+      def in_method?(method, line)
+        method_at(line) == method
+      end
+
+      private
+
+      def method_at(line)
+        result = nil
+
+        runnable_method_lines.each do |source_location|
+          return result if source_location.last > line
+          result = source_location.first
+        end
+
+        result
+      end
+
+      def runnable_methods
+        @runnable_methods ||= @test_class.runnable_methods
+      end
+
+      def runnable_method_lines
+        @runnable_method_lines ||= runnable_methods.map do |runnable_method|
+          [runnable_method] + real_source_locations[runnable_method]
+        end.sort do |a, b| # rubocop:disable Style/MultilineBlockChain
+          if a != b
+            a.last <=> b.last
+          else
+            a.first <=> b.first
+          end
+        end
+      end
+
+      def real_source_locations
+        @real_source_locations ||= Hash.new do |hash, method|
+          hash[method] = @test_class.instance_method(method).source_location.tap do |result|
+            result[0] = File.realpath(result[0])
+          end
+        end
+      end
+    end
+
+    # Helper class to cache source locations TestClassSourceLocations
+    # for classes.
+    class RealSourceLocationCache
+      class << self
+        def [](test_class)
+          hash[test_class]
+        end
+
+        private
+
+        def hash
+          Thread.current[:Attestify_TestList_RealSourceLocationCache] ||= Hash.new do |hash, test_class|
+            hash[test_class] = Attestify::TestList::TestClassSourceLocations.new(test_class)
+          end
         end
       end
     end
