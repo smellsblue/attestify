@@ -47,6 +47,14 @@ module Attestify
       colorize_if_positive(super, @total_failed_assertions, :red)
     end
 
+    def rerun_test_command(result)
+      colorize(super, color_for(result))
+    end
+
+    def comment(message)
+      colorize(super, :cyan)
+    end
+
     def colorize_from_totals(text) # rubocop:disable Metrics/MethodLength
       color =
         if @total_errors > 0
@@ -86,6 +94,8 @@ module Attestify
         "\e[33m"
       when :green
         "\e[32m"
+      when :cyan
+        "\e[36m"
       end
     end
 

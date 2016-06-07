@@ -1,3 +1,5 @@
+require "pathname"
+
 module Attestify
   # Reports results to the console.
   class Reporter # rubocop:disable Metrics/ClassLength
@@ -93,6 +95,7 @@ module Attestify
       puts "Finished in #{elapsed_time}, #{tests_per_second}, #{assertions_per_second}"
       puts "#{total_tests}, #{total_failures}, #{total_errors}, #{total_skips}, " \
            "#{total_assertions}, #{total_failed_assertions}"
+      puts_failure_reruns
     end
 
     def elapsed_time
@@ -137,6 +140,32 @@ module Attestify
 
     def total_failed_assertions
       "#{@total_failed_assertions} failed assertions"
+    end
+
+    def puts_failure_reruns
+      puts
+      puts "Failed tests:"
+      puts
+
+      @failures.each do |failure|
+        puts_failure_rerun(failure)
+      end
+    end
+
+    def puts_failure_rerun(failure)
+      puts "#{rerun_test_command(failure)} #{comment(failure.name)}"
+    end
+
+    def rerun_test_command(failure)
+      # TODO: Should I create a new method to get the test method...?
+      test_method = failure.instance_variable_get(:@_test_method)
+      source = failure.method(test_method).source_location
+      source[0] = Pathname.new(File.realpath(source[0])).relative_path_from(Pathname.new(File.realpath(".")))
+      "attestify #{source.join(":")}"
+    end
+
+    def comment(message)
+      "# #{message}"
     end
   end
 end
