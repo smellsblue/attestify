@@ -2,7 +2,7 @@ require "attestify"
 
 module Attestify
   # Reports results to the console, with color!
-  class ColorReporter < Attestify::Reporter
+  class ColorReporter < Attestify::Reporter # rubocop:disable Metrics/ClassLength
     private
 
     def puts_failure_header(result, number)
@@ -82,7 +82,7 @@ module Attestify
       "#{color_code(color)}#{text}#{color_code(:reset)}"
     end
 
-    def color_code(color) # rubocop:disable Metrics/MethodLength
+    def color_code(color) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       case color
       when :reset
         "\e[0m"
