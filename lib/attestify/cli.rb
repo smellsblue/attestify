@@ -13,7 +13,7 @@ module Attestify
     end
 
     def test_list
-      @test_list ||= Attestify::TestList.new(ARGV)
+      @test_list ||= Attestify::TestList.new(ARGV, dir: options[:directory])
     end
 
     def reporter
@@ -41,6 +41,10 @@ module Attestify
 
         opts.on("-C", "--no-color", "Run without color") do
           options[:color] = false
+        end
+
+        opts.on("-d", "--directory [DIR]", "Run the tests in the provided DIR") do |dir|
+          options[:directory] = dir
         end
 
         opts.on("-h", "--help", "Output this help") do
