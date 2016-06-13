@@ -5,6 +5,7 @@ module Attestify
   autoload :CLI,              "attestify/cli"
   autoload :ColorReporter,    "attestify/color_reporter"
   autoload :Mock,             "attestify/mock"
+  autoload :RakeTask,         "attestify/rake_task"
   autoload :Reporter,         "attestify/reporter"
   autoload :SkippedError,     "attestify/skipped_error"
   autoload :Test,             "attestify/test"

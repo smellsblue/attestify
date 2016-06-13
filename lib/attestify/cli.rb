@@ -4,7 +4,8 @@ require "optparse"
 module Attestify
   # Command Line Interface for running Attestify tests.
   class CLI
-    def initialize
+    def initialize(args = ARGV)
+      @args = args
       @exit_code = true
     end
 
@@ -13,7 +14,7 @@ module Attestify
     end
 
     def test_list
-      @test_list ||= Attestify::TestList.new(ARGV, dir: options[:directory])
+      @test_list ||= Attestify::TestList.new(@args, dir: options[:directory])
     end
 
     def reporter
@@ -60,7 +61,7 @@ module Attestify
     end
 
     def parse_arguments
-      option_parser.parse!
+      option_parser.parse!(@args)
     end
 
     def start
