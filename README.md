@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/smellsblue/attestify.svg?branch=master)](https://travis-ci.org/smellsblue/attestify)
+[![Code Climate](https://codeclimate.com/github/smellsblue/attestify/badges/gpa.svg)](https://codeclimate.com/github/smellsblue/attestify)
+
 # Attestify
 
 Attestify has a few key goals:
