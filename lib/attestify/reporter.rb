@@ -75,7 +75,11 @@ module Attestify
     end
 
     def puts_failure_header(failure, number)
-      puts "#{number}) #{failure.name}"
+      puts "#{number}) #{failure.name}: #{failure_assertion_totals(failure)}"
+    end
+
+    def failure_assertion_totals(failure)
+      "#{failure.failed_assertions_total} out of #{failure.assertions_total} assertions failed"
     end
 
     def puts_failure_details(failure, number)
