@@ -47,6 +47,14 @@ module Attestify
       "#{self.class.name}##{@_test_method}"
     end
 
+    def assertions_total
+      assertions.total
+    end
+
+    def failed_assertions_total
+      assertions.failed
+    end
+
     def passed?
       assertions.passed?
     end
