@@ -46,7 +46,7 @@ module Attestify
       }
     end
 
-    def option_parser
+    def option_parser # rubocop:disable Metrics/MethodLength
       @option_parser ||= OptionParser.new do |opts|
         opts.on("-d", "--directory [DIR]", "Run the tests as if from the provided DIR") do |dir|
           options[:directory] = dir
