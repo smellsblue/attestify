@@ -11,6 +11,7 @@ module Attestify
     end
 
     def self.start
+      Attestify.disable_autorun
       new.start
     end
 

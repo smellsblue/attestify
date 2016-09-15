@@ -20,7 +20,12 @@ module Attestify
     @root ||= File.realpath(File.expand_path("../..", __FILE__)).freeze
   end
 
+  def self.disable_autorun
+    @autorun_disabled = true
+    @autorun.disable if @autorun
+  end
+
   def self.autorun
-    @autorun ||= Attestify::Autorun.new.tap(&:enable)
+    @autorun ||= Attestify::Autorun.new.tap { |a| a.enable unless @autorun_disabled }
   end
 end

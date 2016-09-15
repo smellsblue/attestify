@@ -23,13 +23,21 @@ module Attestify
         end
     end
 
+    def disable
+      @disabled = true
+    end
+
     def enable
       parse_options
       require_helper
-      at_exit { start }
+      at_exit { at_exit_hook }
     end
 
     private
+
+    def at_exit_hook
+      start unless @disabled
+    end
 
     def parse_options
       option_parser.parse!(@args)
