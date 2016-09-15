@@ -4,9 +4,10 @@ require "optparse"
 module Attestify
   # Command Line Interface for running Attestify tests.
   class CLI
+    include Attestify::TestExecutor
+
     def initialize(args = ARGV)
       @args = args
-      @exit_code = true
     end
 
     def self.start
@@ -25,6 +26,8 @@ module Attestify
           Attestify::Reporter.new
         end
     end
+
+    private
 
     def options
       @options ||= {
@@ -56,29 +59,20 @@ module Attestify
       end
     end
 
+    def report?
+      !@ignore_reporting
+    end
+
     def ignore_reporting
       @ignore_reporting = true
     end
 
-    def parse_arguments
+    def before_run
       option_parser.parse!(@args)
     end
 
-    def start
-      timer = Attestify::Timer.time { run }
-    rescue => e
-      @exit_code = 2
-      STDERR.puts("Error running tests: #{e}\n  #{e.backtrace.join("\n  ")}")
-    ensure
-      reporter.timer = timer
-      reporter.report unless @ignore_reporting
-      exit(@exit_code)
-    end
-
-    def run
-      parse_arguments
-      Attestify::TestRunner.new(test_list, reporter).run
-      @exit_code = 1 unless reporter.passed?
+    def after_exec
+      exit(exit_code)
     end
   end
 end
