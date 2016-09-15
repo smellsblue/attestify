@@ -99,7 +99,7 @@ module Attestify
       puts "Finished in #{elapsed_time}, #{tests_per_second}, #{assertions_per_second}"
       puts "#{total_tests}, #{total_failures}, #{total_errors}, #{total_skips}, " \
            "#{total_assertions}, #{total_failed_assertions}"
-      puts_failure_reruns
+      puts_failure_reruns unless @failures.empty?
     end
 
     def elapsed_time
