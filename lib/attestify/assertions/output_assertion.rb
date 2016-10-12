@@ -2,12 +2,11 @@ module Attestify
   module Assertions
     # A helper class for Attestify::Assertions#assert_output.
     class OutputAssertion
-      def initialize(expected_stdout, expected_stderr, stdout, stderr, message)
+      def initialize(expected_stdout, expected_stderr, stdout, stderr)
         @expected_stdout = expected_stdout
         @expected_stderr = expected_stderr
         @stdout = stdout
         @stderr = stderr
-        @message = message
       end
 
       def assert
@@ -15,7 +14,6 @@ module Attestify
       end
 
       def message
-        return @message if @message
         messages = [stdout_message, stderr_message]
         "Expected #{messages.compact.join(", and ")}"
       end

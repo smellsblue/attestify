@@ -30,7 +30,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_with_custom_message
     @assert.assert false, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_empty
@@ -50,7 +50,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_empty_with_custom_message
     @assert.assert_empty [42], "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_equal
@@ -65,7 +65,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_equal_with_custom_message
     @assert.assert_equal 42, "Not 42", "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_in_delta_equal
@@ -100,7 +100,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_in_delta_with_custom_message
     @assert.assert_in_delta 42.0, 42.1, 0.001, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_includes
@@ -120,7 +120,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_includes_with_custom_message
     @assert.assert_includes [1, 2, 3], 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_instance_of
@@ -150,7 +150,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_instance_of_with_custom_message
     @assert.assert_instance_of Float, 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_kind_of_with_correct_class
@@ -180,7 +180,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_kind_of_with_custom_message
     @assert.assert_kind_of Float, 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_match
@@ -195,7 +195,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_match_with_custom_message
     @assert.assert_match "abc", /z/, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_nil
@@ -210,7 +210,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_nil_with_custom_message
     @assert.assert_nil "Not nil", "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_operator
@@ -230,7 +230,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_operator_with_custom_message
     @assert.assert_operator 4, :<=, 2, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_output_ignore_both
@@ -320,7 +320,7 @@ class Attestify::AssertionsTest < Attestify::Test
       warn "Is 42"
     end
 
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_predicate
@@ -340,7 +340,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_predicate_with_custom_message
     @assert.assert_predicate "42", :empty?, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_raises
@@ -393,17 +393,17 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_failing_assert_raises_with_custom_message
     @assert.assert_raises(ArgumentError, "Custom message") { raise NoMethodError, "An example error" }
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_assert_raises_with_custom_message_and_multiple_possible_exceptions
     @assert.assert_raises(ArgumentError, KeyError, "Custom message") { raise NoMethodError, "An example error" }
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_assert_raises_with_custom_message_and_nothing_raised
     @assert.assert_raises(ArgumentError, "Custom message") { }
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_respond_to
@@ -423,7 +423,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_respond_to_with_custom_message
     @assert.assert_respond_to 42, :foobar, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_same
@@ -439,7 +439,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_same_with_custom_message
     @assert.assert_same Object.new, Object.new, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_silent
@@ -487,7 +487,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_silent_with_custom_message
     @assert.assert_silent("Custom message") { puts "Foobar" }
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_assert_42_same_integer
@@ -560,7 +560,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_assert_42_with_custom_message
     @assert.assert_42 Object.new, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_capture_io_restores_output
@@ -649,7 +649,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_flunk_custom_message
     @assert.flunk "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_pass
@@ -674,7 +674,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_with_custom_message
     @assert.refute true, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_empty
@@ -694,7 +694,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_empty_with_custom_message
     @assert.refute_empty [], "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_equal
@@ -709,7 +709,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_equal_with_custom_message
     @assert.refute_equal 42, 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_in_delta_above
@@ -744,7 +744,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_in_delta_with_custom_message
     @assert.refute_in_delta 42.0, 42.00001, 0.001, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_includes_with_include_not_implemented
@@ -764,7 +764,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_includes_with_custom_message
     @assert.refute_includes [1, 2, 42], 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_instance_of_with_parent_class
@@ -794,7 +794,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_instance_of_with_custom_message
     @assert.refute_instance_of Fixnum, 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_kind_of_with_different_class
@@ -824,7 +824,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_kind_of_with_custom_message
     @assert.refute_kind_of Fixnum, 42, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_match
@@ -839,7 +839,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_match_with_custom_message
     @assert.refute_match "abc", /b/, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_nil
@@ -854,7 +854,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_nil_with_custom_message
     @assert.refute_nil nil, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_operator_from_false_result
@@ -874,7 +874,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_operator_with_custom_message
     @assert.refute_operator 4, :>=, 2, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_predicate_from_false_result
@@ -894,7 +894,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_predicate_with_custom_message
     @assert.refute_predicate "", :empty?, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_passing_refute_respond_to_with_a_method_the_object_doesnt_respond_to
@@ -914,7 +914,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_respond_to_with_custom_message
     @assert.refute_respond_to 42, :zero?, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_failing_refute_same
@@ -931,7 +931,7 @@ class Attestify::AssertionsTest < Attestify::Test
   def test_refute_same_with_custom_message
     object = Object.new
     @assert.refute_same object, object, "Custom message"
-    assert_equal "Custom message", @assertions.failure_details.first.message
+    assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   def test_failing_refute_42_with_42
@@ -946,7 +946,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
   def test_refute_42_with_custom_message_doesnt_work
     @assert.refute_42 Object.new, "Custom message"
-    refute_equal "Custom message", @assertions.failure_details.first.message
+    refute_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
   private
