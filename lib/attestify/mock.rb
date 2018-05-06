@@ -1,7 +1,7 @@
 module Attestify
   # Simple class for mocking objects.
   class Mock
-    def initialize(test_or_assertions)
+    def initialize(test_or_assertions = Attestify::Test.current_test)
       @assertions = test_or_assertions
       @assertions = test_or_assertions.assertions if test_or_assertions.respond_to?(:assertions)
       @expectations_hash = Hash.new { |hash, key| hash[key] = [] }

@@ -5,6 +5,13 @@ class Attestify::MockTest < Attestify::Test
     @mock = Attestify::Mock.new(@assertions)
   end
 
+  def test_mock_with_no_argument_uses_current_test
+    mock = Attestify::Mock.new
+    mock.expect(:some_method, true)
+    assert mock.some_method
+    mock.verify
+  end
+
   def test_mock_respond_to_works
     @mock.expect(:one_method, true)
     @mock.expect(:two_method, true)

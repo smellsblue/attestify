@@ -24,9 +24,20 @@ module Attestify
       end
     end
 
+    def self.current_test
+      Thread.current[:Attestify_Test_CurrentTest]
+    end
+
     def self.run_one_method(test_class, method, reporter, filter = nil)
       return if filter && !filter.run?(test_class, method)
-      reporter.record test_class.new(method).run
+
+      begin
+        test = test_class.new(method)
+        Thread.current[:Attestify_Test_CurrentTest] = test
+        reporter.record test.run
+      ensure
+        Thread.current[:Attestify_Test_CurrentTest] = nil
+      end
     end
 
     def self.runnable_methods
