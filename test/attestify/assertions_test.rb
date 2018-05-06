@@ -1,4 +1,10 @@
 class Attestify::AssertionsTest < Attestify::Test
+  class Parent
+  end
+
+  class Child < Parent
+  end
+
   def setup
     @assertions = Attestify::AssertionResults.new
     @assert = Assertable.new(@assertions)
@@ -124,12 +130,12 @@ class Attestify::AssertionsTest < Attestify::Test
   end
 
   def test_passing_assert_instance_of
-    @assert.assert_instance_of Fixnum, 42
+    @assert.assert_instance_of Integer, 42
     assert_passes
   end
 
   def test_failing_assert_instance_of_with_parent_class
-    @assert.assert_instance_of Integer, 42
+    @assert.assert_instance_of Parent, Child.new
     assert_fails
   end
 
@@ -154,12 +160,12 @@ class Attestify::AssertionsTest < Attestify::Test
   end
 
   def test_passing_assert_kind_of_with_correct_class
-    @assert.assert_kind_of Fixnum, 42
+    @assert.assert_kind_of Child, Child.new
     assert_passes
   end
 
   def test_passing_assert_kind_of_with_parent_class
-    @assert.assert_kind_of Integer, 42
+    @assert.assert_kind_of Parent, Child.new
     assert_passes
   end
 
@@ -579,7 +585,7 @@ class Attestify::AssertionsTest < Attestify::Test
 
     begin
       capture_io { raise "Error" }
-    rescue # rubocop:disable Lint/HandleExceptions
+    rescue StandardError # rubocop:disable Lint/HandleExceptions
     end
 
     assert_same original_out, STDOUT
@@ -621,7 +627,7 @@ class Attestify::AssertionsTest < Attestify::Test
       puts "foo"
       warn "bar"
       $stdout.puts "baz"
-      $stderr.puts "qux"
+      $stderr.puts "qux" # rubocop:disable Style/StderrPuts
       STDOUT.puts "quux"
       STDERR.puts "corge"
     end
@@ -768,7 +774,7 @@ class Attestify::AssertionsTest < Attestify::Test
   end
 
   def test_passing_refute_instance_of_with_parent_class
-    @assert.refute_instance_of Integer, 42
+    @assert.refute_instance_of Parent, Child.new
     assert_passes
   end
 
@@ -788,12 +794,12 @@ class Attestify::AssertionsTest < Attestify::Test
   end
 
   def test_failing_refute_instance_of
-    @assert.refute_instance_of Fixnum, 42
+    @assert.refute_instance_of Integer, 42
     assert_fails
   end
 
   def test_refute_instance_of_with_custom_message
-    @assert.refute_instance_of Fixnum, 42, "Custom message"
+    @assert.refute_instance_of Integer, 42, "Custom message"
     assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 
@@ -808,12 +814,12 @@ class Attestify::AssertionsTest < Attestify::Test
   end
 
   def test_failing_refute_kind_of_with_correct_class
-    @assert.refute_kind_of Fixnum, 42
+    @assert.refute_kind_of Child, Child.new
     assert_fails
   end
 
   def test_failing_refute_kind_of_with_parent_class
-    @assert.refute_kind_of Integer, 42
+    @assert.refute_kind_of Parent, Child.new
     assert_fails
   end
 
@@ -823,7 +829,7 @@ class Attestify::AssertionsTest < Attestify::Test
   end
 
   def test_refute_kind_of_with_custom_message
-    @assert.refute_kind_of Fixnum, 42, "Custom message"
+    @assert.refute_kind_of Integer, 42, "Custom message"
     assert_match(/Custom message/, @assertions.failure_details.first.message)
   end
 

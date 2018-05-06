@@ -76,10 +76,10 @@ module Attestify
         result.pop while !result.empty? && !location_in_attestify?(result.last)
         result.pop while !result.empty? && location_in_attestify?(result.last)
         result
-      rescue
+      rescue StandardError
         # In case of a disaster, use the original locations, otherwise
         # tests that should fail would seem to succeed.
-        return backtrace_locations
+        backtrace_locations
       end
 
       def location_in_attestify?(location)

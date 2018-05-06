@@ -16,7 +16,7 @@ module Attestify
     end
 
     def passed?
-      @total_failures + @total_errors == 0
+      (@total_failures + @total_errors).zero?
     end
 
     def record(result)

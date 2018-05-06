@@ -10,7 +10,7 @@ module Attestify
       before_exec
       @exit_code = true
       timer = Attestify::Timer.time { run }
-    rescue => e
+    rescue StandardError => e
       @exit_code = 2
       STDERR.puts("Error running tests: #{e}\n  #{e.backtrace.join("\n  ")}")
     ensure
@@ -30,17 +30,13 @@ module Attestify
 
     attr_reader :exit_code
 
-    def before_run
-    end
+    def before_run; end
 
-    def after_run
-    end
+    def after_run; end
 
-    def before_exec
-    end
+    def before_exec; end
 
-    def after_exec
-    end
+    def after_exec; end
 
     def report?
       true

@@ -17,7 +17,7 @@ module Attestify
   autoload :VERSION,          "attestify/version"
 
   def self.root
-    @root ||= File.realpath(File.expand_path("../..", __FILE__)).freeze
+    @root ||= File.realpath(File.expand_path("..", __dir__)).freeze
   end
 
   def self.disable_autorun

@@ -22,7 +22,12 @@ module Attestify
       @expectations.reject(&:called?).each { |x| x.verify(@assertions) }
     end
 
-    def method_missing(method, *args, &block)
+    def respond_to_missing?(method, include_all = false)
+      return true if @expectations_hash.include?(method)
+      super
+    end
+
+    def method_missing(method, *args, &block) # rubocop:disable Style/MethodMissing
       expectation =
         if @expectations_hash[method].empty?
           UnexpectedCall.new(method, args, block)

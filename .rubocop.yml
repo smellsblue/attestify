@@ -5,6 +5,9 @@ AllCops:
     - vendor/**/*
   DisplayCopNames: true
 
+Layout/SpaceInsideBlockBraces:
+  EnforcedStyleForEmptyBraces: space
+
 Metrics/AbcSize:
   Exclude:
     - test/**/*_test.rb
@@ -26,9 +29,6 @@ Style/ClassAndModuleChildren:
 
 Style/SignalException:
   EnforcedStyle: only_raise
-
-Style/SpaceInsideBlockBraces:
-  EnforcedStyleForEmptyBraces: space
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

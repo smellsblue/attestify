@@ -5,6 +5,17 @@ class Attestify::MockTest < Attestify::Test
     @mock = Attestify::Mock.new(@assertions)
   end
 
+  def test_mock_respond_to_works
+    @mock.expect(:one_method, true)
+    @mock.expect(:two_method, true)
+    assert @mock.respond_to?(:one_method)
+    assert @mock.respond_to?("one_method")
+    assert @mock.respond_to?(:two_method)
+    assert @mock.respond_to?("two_method")
+    refute @mock.respond_to?(:three_method)
+    refute @mock.respond_to?("three_method")
+  end
+
   def test_mock_not_verified
     @mock.expect(:not_called, true)
     @mock.expect(:called, true)
@@ -120,7 +131,7 @@ class Attestify::MockTest < Attestify::Test
       @assert.assert_equal 42, block.call
     end
 
-    assert_equal :answer, @mock.example { 42 }
+    assert_equal(:answer, @mock.example { 42 })
     assert_equal 1, @assertions.passed
     assert_equal 0, @assertions.failed
   end
@@ -130,7 +141,7 @@ class Attestify::MockTest < Attestify::Test
       @assert.assert_equal 42, block.call
     end
 
-    assert_equal :answer, @mock.example { "42" }
+    assert_equal(:answer, @mock.example { "42" })
     assert_equal 0, @assertions.passed
     assert_equal 1, @assertions.failed
   end

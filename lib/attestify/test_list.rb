@@ -1,7 +1,7 @@
 module Attestify
   # Holds the tests that will be loaded for a test run.
   class TestList
-    attr_reader :dir, :test_helper_file
+    attr_reader :dir
 
     def initialize(files = nil, dir: nil)
       @dir = dir || "./test"

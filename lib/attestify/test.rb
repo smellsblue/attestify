@@ -33,11 +33,9 @@ module Attestify
       instance_methods.select { |method| method.to_s.start_with?("test_") }
     end
 
-    def setup
-    end
+    def setup; end
 
-    def teardown
-    end
+    def teardown; end
 
     def assertions
       @_assertions
@@ -88,7 +86,7 @@ module Attestify
       ensure
         teardown
       end
-    rescue => e
+    rescue StandardError => e
       assertions.error = e
     ensure
       return self # rubocop:disable Lint/EnsureReturn

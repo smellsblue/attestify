@@ -109,13 +109,13 @@ module Attestify
       exceptions = [StandardError] if exceptions.empty?
       yield
       record_assert(false, message) { "Expected one of: #{exceptions.inspect} to be raised, but nothing was raised" }
-      return nil
-    rescue => e
+      nil
+    rescue StandardError => e
       record_assert(exceptions.any? { |x| e.is_a?(x) }, message) do
         "Expected one of: #{exceptions.inspect} to be raised, but instead got: #{e.class.name}"
       end
 
-      return e
+      e
     end
 
     def assert_respond_to(object, method, message = nil)
@@ -149,7 +149,7 @@ module Attestify
         if expected.is_a?(Numeric)
           expected == 42
         elsif expected.is_a?(String)
-          expected == "42" || expected.casecmp("forty-two") == 0
+          expected == "42" || expected.casecmp("forty-two").zero?
         elsif expected.respond_to?("42?")
           expected.send("42?")
         elsif expected.respond_to?(:forty_two?)
@@ -263,7 +263,7 @@ module Attestify
     end
 
     def refute_match(matcher, object, message = nil)
-      record_assert(!(matcher =~ object), message) { "Expected not #{matcher.inspect} =~ #{object.inspect}" }
+      record_assert(matcher !~ object, message) { "Expected not #{matcher.inspect} =~ #{object.inspect}" }
     end
 
     def refute_nil(object, message = nil)
