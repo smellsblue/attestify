@@ -5,6 +5,21 @@ class Attestify::MockTest < Attestify::Test
     @mock = Attestify::Mock.new(@assertions)
   end
 
+  def test_mock_not_called_records_failure_with_backtrace
+    assertions = Object.new
+    context = self
+
+    assertions.define_singleton_method(:record) do |value, message, backtrace|
+      context.refute value
+      context.assert_equal "Missing expected call to mock: some_method()", message
+      context.assert_instance_of Array, backtrace
+    end
+
+    mock = Attestify::Mock.new(assertions)
+    mock.expect(:some_method, true)
+    mock.verify
+  end
+
   def test_mock_with_no_argument_uses_current_test
     mock = Attestify::Mock.new
     mock.expect(:some_method, true)

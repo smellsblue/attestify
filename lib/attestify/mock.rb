@@ -83,7 +83,7 @@ module Attestify
 
       def verify(assertions)
         if !called?
-          assertions.record(false, "Missing expected call to mock: #{self}", @caller_locations)
+          assertions.record(false, "Missing expected call to mock: #{self}", caller_locations(4))
         elsif !arguments_valid?
           assertions.record(false, "Expected call to mock: #{self}, but got: #{to_s(:actual)}", @caller_locations)
         else
